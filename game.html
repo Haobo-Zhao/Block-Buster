@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Bricks Breaker!</title>
+</head>
+<body>
+    <canvas id="id-canvas" width="480" height="270" style="border: 2px solid  green"></canvas>
+
+    <script>
+        var log = console.log.bind(console)
+        var canvas = document.getElementById('id-canvas')
+        var context = canvas.getContext('2d')
+        var image = new Image()
+        var x = 105
+        var y = 210
+        var speed = 10
+        image.src = 'paddle.png'
+        image.onload = function() {
+            context.drawImage(image, 105, 210)
+        }
+
+        // events 事件，响应一个输入，可能是鼠标点啊，也可能是键盘按了一个键啊，之类的
+
+        // 有键按下
+        window.addEventListener('keydown', function(event) {
+            var key = event.key
+            if (key == 'a' || key == 'ArrowLeft') {
+                leftDown = true
+            } else if (key == 'd' || event.key == 'ArrowRight') {
+                rightDown = true
+            }
+        })
+
+        // 有键被放开，弹起来了
+        window.addEventListener('keyup', function(event) {
+            var key = event.key
+            if (key == 'a' || key == 'ArrowLeft') {
+                leftDown = false
+            } else if (key == 'd' || event.key == 'ArrowRight') {
+                rightDown = false
+            }
+        })
+
+        var leftDown = false
+        var rightDown = false
+
+        setInterval(function() {
+            if (leftDown) {
+                context.clearRect(0, 0, canvas.width, canvas.height)
+                x -= speed
+                if (x < 0) {
+                    x = 0
+                }
+                context.drawImage(image, x, y)
+            } else if (rightDown) {
+                context.clearRect(0, 0, canvas.width, canvas.height)
+                x += speed
+                if (x + image.width > canvas.width) {
+                    x = canvas.width - image.width
+                }
+                context.drawImage(image, x, y)
+            }
+        }, 1000 / 60)
+    </script>
+</body>
+</html>
