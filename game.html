@@ -9,7 +9,6 @@
 
     <script>
         var log = console.log.bind(console)
-
         var canvasWidth = 480
         var canvasHeight = 270
 
@@ -42,6 +41,21 @@
                         this.x = canvasWidth - this.image.width
                     }
                 },
+
+                moveUp: function() {
+                    this.y -= this.speed
+                    // 改变状态之后，做一个判断，看值是不是还是合理，不合理的话，调到一个合理的值
+                    if (this.y < 0) {
+                        this.y = 0
+                    }
+                },
+
+                moveDown: function() {
+                    this.y += this.speed
+                    if (this.y + this.image.height > canvasHeight) {
+                        this.y = canvasHeight - this.image.height
+                    }
+                },
             }
 
             return o
@@ -70,7 +84,8 @@
         }
 
         // 一个控制器
-        // 也是一个虚拟类，画布在里面,还做了设置，那个setInterval函数
+        // 其实既是是一个虚拟类，也是一个实体类，因为画布在里面,还做了设置，
+        // 那个setInterval函数，是整个画面动起来的核心，也是一直做各种碰撞检测的核心
         var Game = function() {
             var canvas = document.getElementById('id-canvas')
             var context = canvas.getContext('2d')
@@ -106,7 +121,7 @@
             game.update = function() {}
             game.draw = function() {}
 
-            game.moveBall = function() {}
+            game.collide = function() {}
 
             // 注册函数，提供一个借口给外界， 在函数之外，定义一个按键对应的动作
             game.registerAction = function(key, callback) {
@@ -122,6 +137,10 @@
             //  这是让程序动起来，画布刷新，等等操作的真正部分
             // 精彩的开关设计
             setInterval(function() {
+                // 判断球和挡板有没有撞上,装上了的话，把球的X和Y方向的速度都取反。
+                // 要在循环执行时间的函数之前，对球的两个方向的速度做出正确的处理。
+                game.collide()
+
                 // 遍历按下的键，执行对应的动作，让程序动起来
                 // 这就相当于刷新了数据
                 // 刷新数据之后，总要记得重新画图
@@ -183,6 +202,14 @@
                 paddle.moveRight()
             })
 
+            game.registerAction('w', function() {
+                paddle.moveUp()
+            })
+
+            game.registerAction('s', function() {
+                paddle.moveDown()
+            })
+
             game.registerAction(' ', function() {
                 ball.move()
             })
@@ -195,6 +222,15 @@
             //     game.context.drawImage(paddle.image, paddle.x, paddle.y)
             // }
 
+            // 判断球和板子是不是相碰了
+            game.collide = function() {
+                // 上下相碰，先不考虑左右两边,只改变球的Y方向的速度speedY
+                // 球严格在挡板两端的长度以内
+                if ((ball.x + ball.image.width > paddle.x && ball.x < paddle.x + paddle.image.width)
+                 && (ball.y + ball.image.height > paddle.y && ball.y < paddle.y + paddle.image.height)) {
+                    o.speedY *= -1
+                }
+            }
 
             // 定义draw的含义，在setInterval里面会不停地调用这个重新定义过的函数
             game.draw = function() {
