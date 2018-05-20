@@ -9,59 +9,201 @@
 
     <script>
         var log = console.log.bind(console)
-        var canvas = document.getElementById('id-canvas')
-        var context = canvas.getContext('2d')
-        var image = new Image()
-        var x = 105
-        var y = 210
-        var speed = 10
-        image.src = 'paddle.png'
-        image.onload = function() {
-            context.drawImage(image, 105, 210)
+
+        var canvasWidth = 480
+        var canvasHeight = 270
+
+        // 这两个构造函数都使用了闭包的套路
+        var image = function(path) {
+            var img = new Image()
+            img.src = path
+            return img
         }
 
-        // events 事件，响应一个输入，可能是鼠标点啊，也可能是键盘按了一个键啊，之类的
+        var Paddle = function() {
+            //最后这个逗号一定要加，consistency非常重要
+            //JSON这个数据格式最后强制要求不加，是一个很严重的设计错误
+            o = {
+                image: image('paddle.png'),
+                x: 105,
+                y: 210,
+                speed: 10,
+                moveLeft: function() {
+                    this.x -= this.speed
+                    // 改变状态之后，做一个判断，看值是不是还是合理，不合理的话，调到一个合理的值
+                    if (this.x < 0) {
+                        this.x = 0
+                    }
+                },
 
-        // 有键按下
-        window.addEventListener('keydown', function(event) {
-            var key = event.key
-            if (key == 'a' || key == 'ArrowLeft') {
-                leftDown = true
-            } else if (key == 'd' || event.key == 'ArrowRight') {
-                rightDown = true
+                moveRight: function() {
+                    this.x += this.speed
+                    if (this.x + this.image.width > canvasWidth) {
+                        this.x = canvasWidth - this.image.width
+                    }
+                },
             }
-        })
 
-        // 有键被放开，弹起来了
-        window.addEventListener('keyup', function(event) {
-            var key = event.key
-            if (key == 'a' || key == 'ArrowLeft') {
-                leftDown = false
-            } else if (key == 'd' || event.key == 'ArrowRight') {
-                rightDown = false
+            return o
+        }
+
+        var Ball = function() {
+            o = {
+                image : image('ball.png'),
+                x: 140,
+                y: 150,
+                speedX: 3,
+                speedY: 3,
+                move: function() {
+                    if (o.x < 0 || o.x + o.image.width > canvasWidth) {
+                        o.speedX = - o.speedX
+                    }
+                    if (o.y < 0 || o.y + o.image.height > canvasHeight) {
+                        o.speedY *= -1
+                    }
+                    this.x += this.speedX
+                    this.y += this.speedY
+                },
             }
-        })
 
-        var leftDown = false
-        var rightDown = false
+            return o
+        }
 
-        setInterval(function() {
-            if (leftDown) {
-                context.clearRect(0, 0, canvas.width, canvas.height)
-                x -= speed
-                if (x < 0) {
-                    x = 0
+        // 一个控制器
+        // 也是一个虚拟类，画布在里面,还做了设置，那个setInterval函数
+        var Game = function() {
+            var canvas = document.getElementById('id-canvas')
+            var context = canvas.getContext('2d')
+            var game = {}
+            game.canvas = canvas
+            game.context = context
+
+            // 两个对象，一个存哪些键按下对应的动作，一个存当前有哪些键是按下的
+            game.actions = {}
+            game.keydowns = {}
+
+            // events 事件，响应一个输入，可能是鼠标点啊，也可能是键盘按了一个键啊，之类的
+
+            // 有键按下
+            window.addEventListener('keydown', function(event) {
+                var key = event.key
+                if (key == ' ') {
+                    game.keydowns[key] = !game.keydowns[key]
                 }
-                context.drawImage(image, x, y)
-            } else if (rightDown) {
-                context.clearRect(0, 0, canvas.width, canvas.height)
-                x += speed
-                if (x + image.width > canvas.width) {
-                    x = canvas.width - image.width
+                else {
+                    game.keydowns[key] = true
                 }
-                context.drawImage(image, x, y)
+            })
+
+            // 有键被放开，弹起来了
+            window.addEventListener('keyup', function(event) {
+                var key = event.key
+                if (key != ' ') {
+                    game.keydowns[key] = false
+                }
+            })
+
+            game.update = function() {}
+            game.draw = function() {}
+
+            game.moveBall = function() {}
+
+            // 注册函数，提供一个借口给外界， 在函数之外，定义一个按键对应的动作
+            game.registerAction = function(key, callback) {
+                game.actions[key] = callback
             }
-        }, 1000 / 60)
+
+            game.drawImage = function(img) {
+                paddle = img
+                game.context.drawImage(paddle.image, paddle.x, paddle.y)
+            }
+
+
+            //  这是让程序动起来，画布刷新，等等操作的真正部分
+            // 精彩的开关设计
+            setInterval(function() {
+                // 遍历按下的键，执行对应的动作，让程序动起来
+                // 这就相当于刷新了数据
+                // 刷新数据之后，总要记得重新画图
+                // var actions = Object.keys(game.actions)
+                // var key
+                // for (var i = 0; i < actions.length; i++) {
+                //     key = actions[i]
+                //     if (game.keydowns[key]) {
+                //         game.actions[key]()
+                //     }
+                // }
+                for (var key in game.actions) {
+                    if (game.keydowns[key]) {
+                        game.actions[key]()
+                    }
+                }
+
+                // 这两个函数应该是从外面注册进来，
+                // 说得更加明白点就是，这里先用这两个函数占个位置，
+                // 他们的具体定义从外面定义进来
+
+                // 有注册机，这个东西不需要了
+                // update 更新数据
+                // game.update()
+
+                // 因为draw里面要画求和板子了，相当于调用2次，
+                // 所以不能再drawImage()里面清干净画布，
+                game.context.clearRect(0, 0, game.canvas.width, game.canvas.height)
+
+
+                // draw 根据数据，把画面画出来，也就是渲染,当然，已经处理了画之前
+                // 先把画布弄干净了
+                game.draw()
+
+            }, 1000 / 60)
+
+            return game
+        }
+
+        var __main = function() {
+            // 开始创建变量和设置游戏
+            var game = Game()
+            var paddle = Paddle()
+            var ball = Ball()
+
+            paddle.image.onload = function() {
+                game.context.drawImage(paddle.image, paddle.x, paddle.y)
+            }
+
+            ball.image.onload = function() {
+                game.context.drawImage(ball.image, ball.x, ball.y)
+            }
+
+            game.registerAction('a', function() {
+                paddle.moveLeft()
+            })
+
+            game.registerAction('d', function() {
+                paddle.moveRight()
+            })
+
+            game.registerAction(' ', function() {
+                ball.move()
+            })
+
+            // 这里不用考虑图片载入的问题
+            // 没载入，同样画出来，对画布没影响
+            // 已经在入了，那就可以画了，就可以看到
+            // game.draw = function() {
+            //     game.context.clearRect(0, 0, game.canvas.width, game.canvas.height)
+            //     game.context.drawImage(paddle.image, paddle.x, paddle.y)
+            // }
+
+
+            // 定义draw的含义，在setInterval里面会不停地调用这个重新定义过的函数
+            game.draw = function() {
+                game.drawImage(paddle)
+                game.drawImage(ball)
+            }
+        }
+
+        __main()
     </script>
 </body>
 </html>
