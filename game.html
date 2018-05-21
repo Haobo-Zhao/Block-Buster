@@ -3,245 +3,36 @@
 <head>
     <meta charset="utf-8" />
     <title>Bricks Breaker!</title>
+    <script src="config.js" charset="utf-8"></script>
+    <script src="levels.js" charset="utf-8"></script>
+    <script src="utils.js" charset="utf-8"></script>
+    <script src="game.js" charset="utf-8"></script>
+    <script src="paddle.js" charset="utf-8"></script>
+    <script src="ball.js" charset="utf-8"></script>
+    <script src="brick.js" charset="utf-8"></script>
 </head>
 <body>
     <canvas id="id-canvas" width="480" height="270" style="border: 2px solid  green"></canvas>
 
     <script>
-        var log = console.log.bind(console)
-        var canvasWidth = 480
-        var canvasHeight = 270
-
-        var collide = function(a, b) {
-            return (a.x + a.width > b.x && a.x < b.x + b.width) && (a.y + a.height > b.y && a.y < b.y + b.height)
+    var loadLevel = function(level) {
+        var bricks = []
+        // 正常选关从1开始
+        // 但是数组的数据是从零开始
+        var data = levels[level - 1]
+        for (var i = 0; i < data.length; i++) {
+            // 分别代表传入一个砖块的x值和y值
+            bricks.push(Brick(data[i][0], data[i][1]))
         }
-
-        // 这两个构造函数都使用了闭包的套路
-        var imageFromPath = function(path) {
-            var img = new Image()
-            img.src = path
-            return img
-        }
-
-        var Paddle = function() {
-            //最后这个逗号一定要加，consistency非常重要
-            //JSON这个数据格式最后强制要求不加，是一个很严重的设计错误
-            var img = imageFromPath('paddle.png')
-            var o = {
-                image: img,
-                x: 105,
-                y: 210,
-                speed: 10,
-                moveLeft: function() {
-                    this.x -= this.speed
-                    // 改变状态之后，做一个判断，看值是不是还是合理，不合理的话，调到一个合理的值
-                    if (this.x < 0) {
-                        this.x = 0
-                    }
-                },
-
-                moveRight: function() {
-                    this.x += this.speed
-                    if (this.x + this.image.width > canvasWidth) {
-                        this.x = canvasWidth - this.image.width
-                    }
-                },
-
-                moveUp: function() {
-                    this.y -= this.speed
-                    // 改变状态之后，做一个判断，看值是不是还是合理，不合理的话，调到一个合理的值
-                    if (this.y < 0) {
-                        this.y = 0
-                    }
-                },
-
-                moveDown: function() {
-                    this.y += this.speed
-                    if (this.y + this.image.height > canvasHeight) {
-                        this.y = canvasHeight - this.image.height
-                    }
-                },
-
-            }
-            return o
-        }
-
-        var Ball = function() {
-            var img = imageFromPath('ball.png')
-            var o = {
-                image: img,
-                x: 140,
-                y: 150,
-                width: 19,
-                height: 23,
-                speedX: 3,
-                speedY: 3,
-                move: function() {
-                    if (o.x < 0 || o.x + o.image.width > canvasWidth) {
-                        o.speedX = - o.speedX
-                    }
-                    if (o.y < 0 || o.y + o.image.height > canvasHeight) {
-                        o.speedY *= -1
-                    }
-                    this.x += this.speedX
-                    this.y += this.speedY
-                },
-                bounce: function() {
-                    this.speedY *= -1
-                },
-            }
-            return o
-        }
-
-        var Brick = function() {
-            var img = imageFromPath('brick.png')
-            var o = {
-                image: img,
-                x: 30,
-                y: 50,
-                alive: true,
-            }
-            o.kill = function() {
-                o.alive = false
-            }
-
-            o.collide = function(ball) {
-                if (o.alive) {
-                    if (collide(o, ball)) {
-                        o.kill()
-                        ball.bounce()
-                    }
-                }
-            }
-            return o
-        }
-
-        // 一个控制器
-        // 其实既是是一个虚拟类，也是一个实体类，因为画布在里面,还做了设置，
-        // 那个setInterval函数，是整个画面动起来的核心，也是一直做各种碰撞检测的核心
-        var Game = function() {
-            var canvas = document.getElementById('id-canvas')
-            var context = canvas.getContext('2d')
-            var game = {}
-            game.canvas = canvas
-            game.context = context
-
-            // 两个对象，一个存哪些键按下对应的动作，一个存当前有哪些键是按下的
-            game.actions = {}
-            game.keydowns = {}
-
-            // events 事件，响应一个输入，可能是鼠标点啊，也可能是键盘按了一个键啊，之类的
-
-            // 有键按下
-            window.addEventListener('keydown', function(event) {
-                var key = event.key
-                if (key == ' ') {
-                    game.keydowns[key] = !game.keydowns[key]
-                }
-                else {
-                    game.keydowns[key] = true
-                }
-            })
-
-            // 有键被放开，弹起来了
-            window.addEventListener('keyup', function(event) {
-                var key = event.key
-                if (key != ' ') {
-                    game.keydowns[key] = false
-                }
-            })
-
-            game.update = function() {}
-            game.draw = function() {}
-
-            game.collide = function() {}
-
-            // 注册函数，提供一个借口给外界， 在函数之外，定义一个按键对应的动作
-            game.registerAction = function(key, callback) {
-                game.actions[key] = callback
-            }
-
-            game.drawImage = function(img) {
-                game.context.drawImage(img.image, img.x, img.y)
-            }
-
-
-            //  这是让程序动起来，画布刷新，等等操作的真正部分
-            // 精彩的开关设计
-            setInterval(function() {
-                // 判断球和挡板有没有撞上,装上了的话，把球的X和Y方向的速度都取反。
-                // 以及球和砖块撞没撞
-                // 要在循环执行时间的函数之前，对球的两个方向的速度做出正确的处理。
-                game.collide()
-
-
-                // 遍历按下的键，执行对应的动作，让程序动起来
-                // 这就相当于刷新了数据
-                // 刷新数据之后，总要记得重新画图
-                // var actions = Object.keys(game.actions)
-                // var key
-                // for (var i = 0; i < actions.length; i++) {
-                //     key = actions[i]
-                //     if (game.keydowns[key]) {
-                //         game.actions[key]()
-                //     }
-                // }
-                for (var key in game.actions) {
-                    if (game.keydowns[key]) {
-                        game.actions[key]()
-                    }
-                }
-
-                // 这两个函数应该是从外面注册进来，
-                // 说得更加明白点就是，这里先用这两个函数占个位置，
-                // 他们的具体定义从外面定义进来
-
-                // 有注册机，这个东西不需要了
-                // update 更新数据
-                // game.update()
-
-                // 因为draw里面要画求和板子了，相当于调用2次，
-                // 所以不能再drawImage()里面清干净画布，
-                game.context.clearRect(0, 0, game.canvas.width, game.canvas.height)
-
-
-                // draw 根据数据，把画面画出来，也就是渲染,当然，已经处理了画之前
-                // 先把画布弄干净了
-                game.draw()
-
-            }, 1000 / 60)
-
-            return game
-        }
+        return bricks
+    }
 
         var __main = function() {
             // 开始创建变量和设置游戏
             var game = Game()
             var paddle = Paddle()
-            // paddle.image.onload = function() {
-            //     paddle.width = paddle.image.width
-            //     paddle.height = paddle.image.height
-            // }
-
-            var brick = Brick()
-            brick.image.onload = function() {
-                brick.width = brick.image.width
-                brick.height = brick.image.height
-            }
-
             var ball = Ball()
-            // ball.image.onload = function() {
-            //     ball.width = ball.image.width
-            //     ball.height = ball.image.height
-            // }
-
-            paddle.image.onload = function() {
-                game.context.drawImage(paddle.image, paddle.x, paddle.y)
-            }
-
-            ball.image.onload = function() {
-                game.context.drawImage(ball.image, ball.x, ball.y)
-            }
+            var bricks = loadLevel(1)
 
             game.registerAction('a', function() {
                 paddle.moveLeft()
@@ -263,6 +54,15 @@
                 ball.move()
             })
 
+            window.addEventListener('keydown', function(event) {
+                if (event.key == '1') {
+                    bricks = loadLevel(1)
+                }
+                else if (event.key == '2') {
+                    bricks = loadLevel(2)
+                }
+            })
+
             // 这里不用考虑图片载入的问题
             // 没载入，同样画出来，对画布没影响
             // 已经在入了，那就可以画了，就可以看到
@@ -281,15 +81,21 @@
                 }
 
                 // 球和砖块碰撞没有
-                brick.collide(ball)
+                for (var i = 0; i < bricks.length; i++) {
+                    var b = bricks[i]
+                    b.collide(ball)
+                }
             }
 
             // 定义draw的含义，在setInterval里面会不停地调用这个重新定义过的函数
             game.draw = function() {
                 game.drawImage(paddle)
                 game.drawImage(ball)
-                if (brick.alive) {
-                    game.drawImage(brick)
+                for (var i = 0; i < bricks.length; i++) {
+                    var b = bricks[i]
+                    if (b.alive) {
+                        game.drawImage(b)
+                    }
                 }
             }
         }
