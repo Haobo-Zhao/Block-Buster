@@ -1,15 +1,22 @@
-var Brick = function(positionX, positionY) {
-    var img = imageFromPath('brick.png')
+var Brick = function(position) {
+    var img = imageFromPath('brick' + (position[2] || 1) + '.png')
     var o = {
         image: img,
-        x: positionX,
-        y: positionY,
+        x: position[0],
+        y: position[1],
         width: brickWidth,
         height: brickHeight,
+        health: position[2] || 1,
         alive: true,
     }
     o.kill = function() {
-        o.alive = false
+        o.health--
+        if (o.health > 0) {
+            o.image.src = 'brick' + o.health + '.png'
+        }
+        if (o.health <= 0) {
+            o.alive = false
+        }
     }
 
     o.collide = function(ball) {

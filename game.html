@@ -13,19 +13,22 @@
 </head>
 <body>
     <canvas id="id-canvas" width="480" height="270" style="border: 2px solid  green"></canvas>
+    <hr></hr>
+    <input type="range" min="1" max="100" value="60" id="id-fps">
+    <span id="id-span"></span>
 
     <script>
-    var loadLevel = function(level) {
-        var bricks = []
-        // 正常选关从1开始
-        // 但是数组的数据是从零开始
-        var data = levels[level - 1]
-        for (var i = 0; i < data.length; i++) {
-            // 分别代表传入一个砖块的x值和y值
-            bricks.push(Brick(data[i][0], data[i][1]))
+        var loadLevel = function(level) {
+            var bricks = []
+            // 正常选关从1开始
+            // 但是数组的数据是从零开始
+            var data = levels[level - 1]
+            for (var i = 0; i < data.length; i++) {
+                // 分别代表传入一个砖块的x值、y值和血量
+                bricks.push(Brick(data[i]))
+            }
+            return bricks
         }
-        return bricks
-    }
 
         var __main = function() {
             // 开始创建变量和设置游戏
@@ -33,6 +36,15 @@
             var paddle = Paddle()
             var ball = Ball()
             var bricks = loadLevel(1)
+
+            var fpsRange = document.getElementById("id-fps")
+            fpsRange.oninput = function() {
+                window.fps = Number(fpsRange.value)
+                fpsShow.innerHTML = "&nbsp&nbspfps: " + window.fps
+            }
+
+            var fpsShow = document.getElementById('id-span')
+            fpsShow.innerHTML = "&nbsp&nbsp fps: " + window.fps
 
             game.registerAction('a', function() {
                 paddle.moveLeft()
@@ -54,18 +66,16 @@
                 ball.move()
             })
 
+            // 判断按下的是不是数字的一个巧招
             window.addEventListener('keydown', function(event) {
-                if (event.key == '1') {
-                    bricks = loadLevel(1)
-                }
-                else if (event.key == '2') {
-                    bricks = loadLevel(2)
+                if ('123456789'.includes(event.key)) {
+                    bricks = loadLevel(Number(event.key))
                 }
             })
 
             // 这里不用考虑图片载入的问题
-            // 没载入，同样画出来，对画布没影响
-            // 已经在入了，那就可以画了，就可以看到
+            // 没载入，同样画出来，只不过是一片空白，对画布没影响
+            // 已经载入了，那就可以画了，就可以看到
             // game.draw = function() {
             //     game.context.clearRect(0, 0, game.canvas.width, game.canvas.height)
             //     game.context.drawImage(paddle.image, paddle.x, paddle.y)
@@ -87,7 +97,7 @@
                 }
             }
 
-            // 定义draw的含义，在setInterval里面会不停地调用这个重新定义过的函数
+            // 定义draw的含义，在setTimeout里面会不停地调用这个重新定义过的函数
             game.draw = function() {
                 game.drawImage(paddle)
                 game.drawImage(ball)
@@ -97,7 +107,14 @@
                         game.drawImage(b)
                     }
                 }
+
+                if (game.keydowns[' '] == false) {
+                    game.context.font = "50px Arial"
+                    game.context.fillText("Paused",canvasWidth / 2, canvasHeight / 2);
+                }
             }
+
+            game.runLoop()
         }
 
         __main()
