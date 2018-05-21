@@ -12,8 +12,12 @@
         var canvasWidth = 480
         var canvasHeight = 270
 
+        var collide = function(a, b) {
+            return (a.x + a.width > b.x && a.x < b.x + b.width) && (a.y + a.height > b.y && a.y < b.y + b.height)
+        }
+
         // 这两个构造函数都使用了闭包的套路
-        var image = function(path) {
+        var imageFromPath = function(path) {
             var img = new Image()
             img.src = path
             return img
@@ -22,8 +26,9 @@
         var Paddle = function() {
             //最后这个逗号一定要加，consistency非常重要
             //JSON这个数据格式最后强制要求不加，是一个很严重的设计错误
-            o = {
-                image: image('paddle.png'),
+            var img = imageFromPath('paddle.png')
+            var o = {
+                image: img,
                 x: 105,
                 y: 210,
                 speed: 10,
@@ -56,16 +61,19 @@
                         this.y = canvasHeight - this.image.height
                     }
                 },
-            }
 
+            }
             return o
         }
 
         var Ball = function() {
-            o = {
-                image : image('ball.png'),
+            var img = imageFromPath('ball.png')
+            var o = {
+                image: img,
                 x: 140,
                 y: 150,
+                width: 19,
+                height: 23,
                 speedX: 3,
                 speedY: 3,
                 move: function() {
@@ -78,8 +86,33 @@
                     this.x += this.speedX
                     this.y += this.speedY
                 },
+                bounce: function() {
+                    this.speedY *= -1
+                },
+            }
+            return o
+        }
+
+        var Brick = function() {
+            var img = imageFromPath('brick.png')
+            var o = {
+                image: img,
+                x: 30,
+                y: 50,
+                alive: true,
+            }
+            o.kill = function() {
+                o.alive = false
             }
 
+            o.collide = function(ball) {
+                if (o.alive) {
+                    if (collide(o, ball)) {
+                        o.kill()
+                        ball.bounce()
+                    }
+                }
+            }
             return o
         }
 
@@ -129,8 +162,7 @@
             }
 
             game.drawImage = function(img) {
-                paddle = img
-                game.context.drawImage(paddle.image, paddle.x, paddle.y)
+                game.context.drawImage(img.image, img.x, img.y)
             }
 
 
@@ -138,8 +170,10 @@
             // 精彩的开关设计
             setInterval(function() {
                 // 判断球和挡板有没有撞上,装上了的话，把球的X和Y方向的速度都取反。
+                // 以及球和砖块撞没撞
                 // 要在循环执行时间的函数之前，对球的两个方向的速度做出正确的处理。
                 game.collide()
+
 
                 // 遍历按下的键，执行对应的动作，让程序动起来
                 // 这就相当于刷新了数据
@@ -184,7 +218,22 @@
             // 开始创建变量和设置游戏
             var game = Game()
             var paddle = Paddle()
+            // paddle.image.onload = function() {
+            //     paddle.width = paddle.image.width
+            //     paddle.height = paddle.image.height
+            // }
+
+            var brick = Brick()
+            brick.image.onload = function() {
+                brick.width = brick.image.width
+                brick.height = brick.image.height
+            }
+
             var ball = Ball()
+            // ball.image.onload = function() {
+            //     ball.width = ball.image.width
+            //     ball.height = ball.image.height
+            // }
 
             paddle.image.onload = function() {
                 game.context.drawImage(paddle.image, paddle.x, paddle.y)
@@ -228,14 +277,20 @@
                 // 球严格在挡板两端的长度以内
                 if ((ball.x + ball.image.width > paddle.x && ball.x < paddle.x + paddle.image.width)
                  && (ball.y + ball.image.height > paddle.y && ball.y < paddle.y + paddle.image.height)) {
-                    o.speedY *= -1
+                    ball.speedY *= -1
                 }
+
+                // 球和砖块碰撞没有
+                brick.collide(ball)
             }
 
             // 定义draw的含义，在setInterval里面会不停地调用这个重新定义过的函数
             game.draw = function() {
                 game.drawImage(paddle)
                 game.drawImage(ball)
+                if (brick.alive) {
+                    game.drawImage(brick)
+                }
             }
         }
 
