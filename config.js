@@ -15,3 +15,6 @@ window.fps = 60
 
 // 处不处理逻辑，画不画图的标记符
 // window.paused = false
+
+//分数
+window.score = 0

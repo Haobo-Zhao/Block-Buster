@@ -23,6 +23,7 @@ var Brick = function(position) {
         if (o.alive) {
             if (collide(o, ball)) {
                 o.kill()
+                window.score += 100
                 ball.bounce()
             }
         }
