@@ -1,5 +1,5 @@
-var Brick = function(position) {
-    var img = imageFromPath('brick' + (position[2] || 1) + '.png')
+var Brick = function(images, position) {
+    var img = images['brick' + (position[2] || 1)]
     var o = {
         image: img,
         x: position[0],

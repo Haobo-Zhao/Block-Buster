@@ -1,7 +1,7 @@
-var Paddle = function() {
+var Paddle = function(images) {
     //最后这个逗号一定要加，consistency非常重要
     //JSON这个数据格式最后强制要求不加，是一个很严重的设计错误
-    var img = imageFromPath('paddle.png')
+    var img = images['paddle']
     var o = {
         image: img,
         x: 105,

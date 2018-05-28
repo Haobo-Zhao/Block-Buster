@@ -8,10 +8,14 @@ var Game = function() {
     var game = {}
     game.canvas = canvas
     game.context = context
-
+    
     // 两个对象，一个存哪些键按下对应的动作，一个存当前有哪些键是按下的
     game.actions = {}
     game.keydowns = {}
+    
+    // 存储已经加载好了的图片标签tag，虽然严格说叫element，但是我更喜欢叫tag
+    // 一个对象，更准确地说，是一个字典
+    game.images = {}
 
     // events 事件，响应一个输入，可能是鼠标点啊，也可能是键盘按了一个键啊，之类的
 
@@ -39,6 +43,8 @@ var Game = function() {
 
     game.collide = function() {}
 
+    game.loadImages = function() {}
+
     // 注册函数，提供一个借口给外界， 在函数之外，定义一个按键对应的动作
     game.registerAction = function(key, callback) {
         game.actions[key] = callback
@@ -49,6 +55,9 @@ var Game = function() {
         game.context.drawImage(img.image, img.x, img.y)
     }
 
+
+
+    // 整个程序一直在跑的关键程序
     // 精彩的递归函数
     // 这么干，可以每一次跑了runLoop之后，都重新设置一遍setTimeout的时间
     // 而之前的setInterval，只执行一次
