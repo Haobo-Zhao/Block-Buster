@@ -30,6 +30,8 @@ var Game = function() {
         }
     })
 
+
+    // 实现按下键做一些响应
     // 有键被放开，弹起来了
     window.addEventListener('keyup', function(event) {
         var key = event.key

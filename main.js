@@ -87,6 +87,29 @@ var __main = function() {
                 bricks = loadLevel(game.images, Number(event.key))
             }
         })
+
+        // 三个函数联合起来，实现球的拖拽的功能
+        window.addEventListener('mousedown', function(event) {
+            game.moving = true
+            game.initialX = event.offsetX
+            game.initialY = event.offsetY
+        })
+        // 在暂停的情况下才允许移动球，当然也可以可以随便改
+        window.addEventListener('mousemove', function(event) {
+            if ((game.moving == true) && (game.keydowns[' '] == false)) {
+                var currentX = event.offsetX
+                var currentY = event.offsetY
+                ball.x += currentX - game.initialX
+                ball.y += currentY - game.initialY
+                // 注意，移动一次球之后，要把原点重新定位到这个位置来，方便下一次移动计算位移
+                game.initialX = currentX
+                game.initialY = currentY
+            }
+        })
+        
+        window.addEventListener('mouseup', function(event) {
+            game.moving = false
+        })
     
         // 这里不用考虑图片载入的问题
         // 没载入，同样画出来，只不过是一片空白，对画布没影响
@@ -111,6 +134,8 @@ var __main = function() {
                 b.collide(ball)
             }
         }
+
+        
     
         // 定义draw的含义，在setTimeout里面会不停地调用这个重新定义过的函数
         game.draw = function() {
