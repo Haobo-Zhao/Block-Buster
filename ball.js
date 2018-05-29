@@ -11,15 +11,26 @@ var Ball = function(images) {
         move: function() {
             if (o.x < 0 || o.x + o.width > canvasWidth) {
                 o.speedX = - o.speedX
+                
+                log('Current direction of ball: ' + (o.speedX > 0 ? 'right' : 'left')  
+                + ' ' + (o.speedY > 0 ? 'down' : 'up'))
+
             }
             if (o.y < 0 || o.y + o.height > canvasHeight) {
                 o.speedY *= -1
+
+                
+                log('Current direction of ball: ' + (o.speedX > 0 ? 'right' : 'left')  
+                + ' ' + (o.speedY > 0 ? 'down' : 'up'))
             }
+                        
             this.x += this.speedX
             this.y += this.speedY
         },
         bounce: function() {
             this.speedY *= -1
+            log('Current direction of ball: ' + (o.speedX > 0 ? 'right' : 'left')  
+            + ' ' + (o.speedY > 0 ? 'down' : 'up'))
         },
     }
     return o

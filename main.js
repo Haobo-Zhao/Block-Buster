@@ -90,7 +90,12 @@ var __main = function() {
 
         // 三个函数联合起来，实现球的拖拽的功能
         window.addEventListener('mousedown', function(event) {
-            game.moving = true
+            // 在球的区域里面才能够拖这个球
+            if (event.offsetX >= ball.x && event.offsetX <= ball.x + ball.width) {
+                if (event.offsetY >= ball.y && event.offsetY <= ball.y + ball.height) {
+                    game.moving = true
+                }
+            }
             game.initialX = event.offsetX
             game.initialY = event.offsetY
         })
@@ -101,12 +106,13 @@ var __main = function() {
                 var currentY = event.offsetY
                 ball.x += currentX - game.initialX
                 ball.y += currentY - game.initialY
-                // 注意，移动一次球之后，要把原点重新定位到这个位置来，方便下一次移动计算位移
+                // 注意，如果用笨办法，就是算位移，
+                // 移动一次球之后，要把原点重新定位到这个位置来，方便下一次移动计算位移
                 game.initialX = currentX
                 game.initialY = currentY
             }
         })
-        
+        //鼠标抬起来了，就不再移动球了
         window.addEventListener('mouseup', function(event) {
             game.moving = false
         })
@@ -126,6 +132,8 @@ var __main = function() {
             if ((ball.x + ball.width > paddle.x && ball.x < paddle.x + paddle.width)
              && (ball.y + ball.height > paddle.y && ball.y < paddle.y + paddle.height)) {
                 ball.speedY *= -1
+                log('Current direction of ball: ' + (ball.speedX > 0 ? 'right' : 'left')  
+                + ' ' + (ball.speedY > 0 ? 'down' : 'up'))
             }
     
             // 球和砖块碰撞没有
@@ -159,11 +167,11 @@ var __main = function() {
             }
     
             score.innerHTML = "分数: " + window.score
-    
-            // log()
         }
 
         // 都定义好之后，开始跑程序了
+        log('Current direction of ball: ' + (ball.speedX > 0 ? 'right' : 'left')  
+            + ' ' + (ball.speedY > 0 ? 'down' : 'up'))
         game.runLoop()
     })
 }

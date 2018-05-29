@@ -1,7 +1,7 @@
 var e = sel => document.querySelector(sel)
 
 var log = function(message) {
-    e('#id-textarea').value += message + '\n'
+    e('#id-textarea').value = message + '\n' + e('#id-textarea').value
 }
 
 var collide = function(a, b) {
