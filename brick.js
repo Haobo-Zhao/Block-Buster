@@ -12,7 +12,7 @@ var Brick = function(images, position) {
     o.kill = function() {
         o.health--
         if (o.health > 0) {
-            o.image.src = 'brick' + o.health + '.png'
+            o.image = images['brick' + o.health]
         }
         if (o.health <= 0) {
             o.alive = false

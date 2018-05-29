@@ -25,7 +25,8 @@ var __main = function() {
     var game = Game()
    
 
-    // 把图片加载完成之后，再执行整个程序，就不用同一张图片执行好几次的这种情况出现。
+    // 把图片加载完成之后，再执行整个程序，就不用同一张图片执行好几次的这种情况出现,
+    // 对说的就是你，block。
     game.loadImages = function(paths, callback) {
         var names = Object.keys(paths)
         for (let i = 0; i < names.length; i++) {
@@ -83,7 +84,7 @@ var __main = function() {
         // 判断按下的是不是数字的一个巧招
         window.addEventListener('keydown', function(event) {
             if ('123456789'.includes(event.key)) {
-                bricks = loadLevel(Number(event.key))
+                bricks = loadLevel(game.images, Number(event.key))
             }
         })
     
