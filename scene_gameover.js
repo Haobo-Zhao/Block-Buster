@@ -11,7 +11,9 @@ var scene_gameover = function(game) {
     window.addEventListener('keydown', function(event) {
         if (window.gameover && event.key == 'r') {
             window.gameover = false
-            console.log(game)
+            // 在为了和刚刚打开html文件的时候的效果一样
+            // 一开始球是不动的，按了空格才走
+            game.keydowns[' '] = undefined
             var restart = scene_gaming(game)
             game.run_with_scene(restart)
         }

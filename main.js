@@ -31,5 +31,11 @@ var __main = function() {
     game.loadImages(imagePaths, function(g){
         var scene = scene_gaming(g)
         game.run_with_scene(scene)
+
+        // 不能放在game.run_with_scene(scene)这个函数里面，
+        // 不然会从gameover场景重新开始（切换到gaming场景）
+        // 会多次调用runLoop这个函数，每一次刷新画面就刷新好几次，逻辑也是
+        // 相当于有好几个runLoop()在跑
+        game.runLoop()
     })
 }

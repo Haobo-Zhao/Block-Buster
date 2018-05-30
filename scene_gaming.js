@@ -144,7 +144,8 @@ var scene_gaming = function(game) {
     
     
     // 都定义好之后，开始跑程序了
-    // 不需要了，新版本在game.run_with_scene(scene)函数里面跑了
+    // 不需要了，在__main()函数里面调用了一次runLoop()，那里会有更加好的解释
+    // 归根到底，就是runLoop()只用跑一次，因为它会自己调用自己，而且没办法停下来
     // game.runLoop()
 
     return scene

@@ -106,9 +106,11 @@ var Game = function() {
         game.draw()
 
         // next round
-        //  这是让程序动起来，画布刷新，等等操作的真正部分
+        // 这是让程序动起来，画布刷新，等等操作的真正部分
         // 精彩的开关设计
         // 全局变量用来实时更新帧率
+        // 有点类似递归的样子，只不过每次执行完之后，重新定义时间间隔，根据全局变量window.fps
+        // 所以能做到在游戏里面调整帧率
         setTimeout(function() {
             game.runLoop()
         }, 1000 / window.fps)
@@ -118,7 +120,6 @@ var Game = function() {
     game.run_with_scene = function(scene) {
         game.collide = scene.collide
         game.draw = scene.draw
-        game.runLoop()
     }
 
     return game
