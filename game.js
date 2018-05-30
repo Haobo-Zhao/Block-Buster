@@ -115,5 +115,11 @@ var Game = function() {
 
     }
 
+    game.run_with_scene = function(scene) {
+        game.collide = scene.collide
+        game.draw = scene.draw
+        game.runLoop()
+    }
+
     return game
 }
