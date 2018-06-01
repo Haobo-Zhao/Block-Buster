@@ -1,11 +1,11 @@
 var __main = function() {
     var imagePaths = {
-        ball: 'ball.png',
-        paddle: 'paddle.png',
+        ball: 'img/ball.png',
+        paddle: 'img/paddle.png',
 
-        brick1: 'brick1.png',
-        brick2: 'brick2.png',
-        brick3: 'brick3.png',
+        brick1: 'img/brick1.png',
+        brick2: 'img/brick2.png',
+        brick3: 'img/brick3.png',
     }
 
     // 开始创建变量和设置游戏

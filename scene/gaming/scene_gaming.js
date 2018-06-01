@@ -5,7 +5,7 @@ class scene_gaming {
 
         self.game = game
         self.paddle = Paddle(game.images)
-        self.ball = Ball(game.images)
+        self.ball = new Ball(game.images)
         self.bricks = loadLevel(game.images, 1)
 
         self.fpsRange = document.getElementById("id-fps")
@@ -82,14 +82,7 @@ class scene_gaming {
         window.addEventListener('mouseup', function(event) {
             self.game.moving = false
         })
-
-        // 这里不用考虑图片载入的问题
-        // 没载入，同样画出来，只不过是一片空白，对画布没影响
-        // 已经载入了，那就可以画了，就可以看到
-        // game.draw = function() {
-        //     game.context.clearRect(0, 0, game.canvas.width, game.canvas.height)
-        //     game.context.drawImage(paddle.image, paddle.x, paddle.y)
-        // }
+        
 
         self.collide = function() {
             // 判断球和板子是不是相碰了
@@ -111,6 +104,12 @@ class scene_gaming {
 
         // 定义draw的含义，在setTimeout里面会不停地调用这个重新定义过的函数
         self.draw = function() {
+            
+            if (game.keydowns[' '] == false) {
+                game.context.font = "50px Arial"
+                game.context.fillText("Paused",canvasWidth / 2, canvasHeight / 2)
+            }
+            
             // 如果球的下端面碰到下面的屏幕，游戏就结束
             if (self.ball.y + self.ball.height >= canvasHeight) {
                 // 存一个状态，说游戏结束了
@@ -130,11 +129,6 @@ class scene_gaming {
                 if (b.alive) {
                     game.drawImage(b)
                 }
-            }
-
-            if (game.keydowns[' '] == false) {
-                game.context.font = "50px Arial"
-                game.context.fillText("Paused",canvasWidth / 2, canvasHeight / 2)
             }
 
             self.score.innerHTML = "分数: " + window.score

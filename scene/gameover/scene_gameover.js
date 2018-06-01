@@ -4,6 +4,7 @@ class scene_gameover {
         var self = this
         self.game = game
         self.scene = {}
+        self.update = function() {}
         self.collide = function() {}
         self.draw = function() {
             self.game.context.font = "40px Arial"

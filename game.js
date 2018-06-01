@@ -9,10 +9,18 @@ class Game {
         self.keydowns = {}
         self.images = {}
 
-        self.update = function() {}
         self.draw = function() {}
         self.collide = function() {}
         self.loadImages = function() {}
+
+        self.update = function() {
+            self.collide()
+            for (var key in self.actions) {
+                if (self.keydowns[key]) {
+                    self.actions[key]()
+                }
+            }
+        }
 
         self.registerAction = function(key, callback) {
             self.actions[key] = callback
@@ -27,14 +35,10 @@ class Game {
         }
 
         self.runLoop = function() {
-            self.collide()
-            for (var key in self.actions) {
-                if (self.keydowns[key]) {
-                    self.actions[key]()
-                }
-            }
             self.context.clearRect(0, 0, self.canvas.width, self.canvas.height)
+            // 先画一个画面，然后更新数据，下一次跑这个函数，再来画新的画面。
             self.draw()
+            self.update()
             setTimeout(function() {
                 self.runLoop()
             }, 1000 / window.fps)
