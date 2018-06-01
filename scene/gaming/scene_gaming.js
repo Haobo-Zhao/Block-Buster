@@ -10,8 +10,8 @@ class scene_gaming {
 
         self.fpsRange = document.getElementById("id-fps")
         self.fpsRange.oninput = function() {
-            window.fps = Number(fpsRange.value)
-            fpsShow.innerHTML = "&nbsp&nbspfps: " + window.fps
+            window.fps = Number(self.fpsRange.value)
+            self.fpsShow.innerHTML = "&nbsp&nbspfps: " + window.fps
         }
 
         self.fpsShow = document.getElementById('id-span')
@@ -88,9 +88,35 @@ class scene_gaming {
             // 判断球和板子是不是相碰了
             // 上下相碰，先不考虑左右两边,只改变球的Y方向的速度speedY
             // 球严格在挡板两端的长度以内
-            if ((self.ball.x + self.ball.width > self.paddle.x && self.ball.x < self.paddle.x + self.paddle.width)
-                && (self.ball.y + self.ball.height > self.paddle.y && self.ball.y < self.paddle.y + self.paddle.height)) {
-                self.ball.speedY *= -1
+            // if ((self.ball.x + self.ball.width > self.paddle.x && self.ball.x < self.paddle.x + self.paddle.width)
+            //     && (self.ball.y + self.ball.height > self.paddle.y && self.ball.y < self.paddle.y + self.paddle.height)) {
+            //     self.ball.speedY *= -1
+            //     log('Current direction of ball: ' + (self.ball.speedX > 0 ? 'right' : 'left')  
+            //     + ' ' + (self.ball.speedY > 0 ? 'down' : 'up'))
+            // }
+
+            var rightMost = Math.max(self.paddle.x + self.paddle.width, self.ball.x + self.ball.width)
+            var leftMost = Math.min(self.paddle.x, self.ball.x)
+            var overlapX = self.paddle.width + self.ball.width - (rightMost - leftMost)
+
+            var upMost = Math.min(self.paddle.y, self.ball.y)
+            var downMost = Math.max(self.paddle.y + self.paddle.height, self.ball.y + self.ball.height)
+            var overlapY = self.paddle.height + self.ball.height - (downMost - upMost)
+
+            if (overlapX > 0 && overlapY > 0) {
+                // 撞到板子上下
+                if (overlapX > overlapY) {
+                    self.ball.speedY *= -1
+                }
+                // 撞到板子左右
+                else if (overlapY > overlapX) {
+                    self.ball.speedX *= -1
+                }
+                // 撞进对角线
+                else {
+                    self.ball.speedX *= -1
+                    self.ball.speedY *= -1
+                }
                 log('Current direction of ball: ' + (self.ball.speedX > 0 ? 'right' : 'left')  
                 + ' ' + (self.ball.speedY > 0 ? 'down' : 'up'))
             }
@@ -126,6 +152,7 @@ class scene_gaming {
             // 画砖块
             for (let i = 0; i < self.bricks.length; i++) {
                 var b = self.bricks[i]
+                // 如果砖块还活着，还有血，就画
                 if (b.alive) {
                     game.drawImage(b)
                 }

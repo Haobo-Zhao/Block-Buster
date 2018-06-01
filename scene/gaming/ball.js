@@ -30,10 +30,10 @@ class Ball {
             self.y += self.speedY
         }
         
-        self.bounce = function() {
-            self.speedY *= -1
-            log('Current direction of ball: ' + (self.speedX > 0 ? 'right' : 'left')  
-            + ' ' + (self.speedY > 0 ? 'down' : 'up'))
-        }
+        // self.bounce = function() {
+        //     self.speedY *= -1
+        //     log('Current direction of ball: ' + (self.speedX > 0 ? 'right' : 'left')  
+        //     + ' ' + (self.speedY > 0 ? 'down' : 'up'))
+        // }
     }
 }
