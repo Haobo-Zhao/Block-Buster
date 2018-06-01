@@ -9,7 +9,7 @@ var __main = function() {
     }
 
     // 开始创建变量和设置游戏
-    var game = Game()
+    var game = Game.new()
    
 
     // 把图片加载完成之后，再执行整个程序，就不用同一张图片执行好几次的这种情况出现,
@@ -29,7 +29,7 @@ var __main = function() {
     }
 
     game.loadImages(imagePaths, function(g){
-        var scene = scene_gaming(g)
+        var scene = new scene_gaming(g)
         game.run_with_scene(scene)
 
         // 不能放在game.run_with_scene(scene)这个函数里面，

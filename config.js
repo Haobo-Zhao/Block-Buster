@@ -1,11 +1,12 @@
+// 硬编码的设置，根据图片的数据来
 var canvasWidth = 480
 var canvasHeight = 270
 
-var ballWidth = 19
-var ballHeight = 23
+var ballWidth = 8
+var ballHeight = 8
 
-var paddleWidth = 271
-var paddleHeight = 31
+var paddleWidth = 64
+var paddleHeight = 16
 
 var brickWidth = 62
 var brickHeight = 23

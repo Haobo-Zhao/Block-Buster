@@ -27,6 +27,7 @@ var Ball = function(images) {
             this.x += this.speedX
             this.y += this.speedY
         },
+        
         bounce: function() {
             this.speedY *= -1
             log('Current direction of ball: ' + (o.speedX > 0 ? 'right' : 'left')  
