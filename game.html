@@ -1,35 +1,37 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
-    <title>Bricks Breaker!</title>
-    <script src="config.js" charset="utf-8"></script>
-    <script src="utils.js" charset="utf-8"></script>
-    <script src="levels.js" charset="utf-8"></script>
-    <script src="game.js" charset="utf-8"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>game 1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        #id-canvas {
+            border: 1px solid #000000;
+        }
+    </style>
 
-    <script src="scene/gaming/paddle.js" charset="utf-8"></script>
-    <script src="scene/gaming/ball.js" charset="utf-8"></script>
-    <script src="scene/gaming/brick.js" charset="utf-8"></script>
-    <script src="scene/gaming/scene_gaming.js" charset="utf-8"></script>
+    <script src="game/utils.js"></script>
+    <script src="game/game.js"></script>
+    <script src="game/scene.js"></script>
+    
+    <script src="scene/gaming/scene_gaming.js"></script>
+    <script src="scene/gaming/paddle.js"></script>
+    <script src="scene/gaming/ball.js"></script>
+    <script src="scene/gaming/brick.js"></script>
+    <script src="scene/gaming/levels.js"></script>
 
-    <script src="scene/gameover/scene_gameover.js" charset="utf-8"></script>
-
-    <script src="main.js" charset="utf-8"></script>
-
+    <script src="scene/title/scene_title.js"></script>
+    <script src="scene/game_over/scene_game_over.js"></script>
 </head>
+
 <body>
-    <canvas id="id-canvas" width="480" height="270" style="border: 2px solid  green"></canvas>
-    <hr></hr>
-    <input type="range" min="1" max="100" value="60" id="id-fps">
-    <span id="id-span"></span>
-    <p id="id-score"></p>
-    <textarea id="id-textarea" cols="100" rows="30" readonly></textarea>
-
-    <script>
-
-        __main()
-        
-    </script>
+    <canvas id="id-canvas"></canvas>
+    <hr>
+    <input id="id-fps" type="range" value="60" min="1" max="120" hidden>
 </body>
+
+<script src="main.js"></script>
+
 </html>

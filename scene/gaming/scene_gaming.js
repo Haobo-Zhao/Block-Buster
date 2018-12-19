@@ -1,169 +1,164 @@
-// 用面向对象来重构
-class scene_gaming {
+// 挡板，球 和 砖块 直接做成全局变量
+var paddle = {}
+var ball = {};
+var bricks = []
+var dragging = false
+var score = 0
+
+// 加载关卡的实现是改变全局数据 bricks 这个数组
+window.loadLevel = (n, g) => {
+    var level = levels[n - 1]
+    var bricks = []
+    for (let i = 0; i < level.length; i++) {
+        let position = level[i]
+        let brick = Brick(position, g)
+        bricks.push(brick)
+    }
+
+    return bricks
+}
+
+enableDebugMode = (enable, game) => {
+
+    // 用个反逻辑，缩小后面的语句块的层次，因为如果不用的话，就要再套一个大括号    
+    if (!enable) {
+        return
+    }
+
+    // 用滑条来控制球的速度
+    var inputFps = document.querySelector('#id-fps')
+    inputFps.hidden = false
+    inputFps.addEventListener('input', (event) => {
+        window.fps = Number(event.target.value)
+    })
+
+    // 开始或者暂停游戏
+    window.addEventListener('keydown', (event) => {
+        var k = event.key
+        if (k == ' ') {
+            ball.fired = !ball.fired
+        } else if ('123456789'.includes(Number(k))) {
+            bricks = loadLevel(Number(k), game)
+        }
+    })
+
+    // 拖动小球的功能
+    // 也可以直接加载 canvas 上面来
+    window.addEventListener('mousedown', (event) => {
+        // offsetX 算上了 canvas 的 border，相当于从border的外面边界开始算起
+        // 所以为了准确得到是 canvas 里面的哪个点的坐标，x 和 y 的坐标都要减 1
+        var x = event.offsetX - 1
+        var y = event.offsetY - 1
+        // 有没有点中小球
+        if ((x >= ball.x && x <= ball.x + ball.w) && (y >= ball.y && y <= ball.y + ball.h)) {
+            dragging = true
+        }
+    })
+    window.addEventListener('mousemove', (event) => {
+        if (dragging) {
+            ball.x += event.movementX
+            ball.y += event.movementY
+        }
+    })
+    window.addEventListener('mouseup', (event) => {
+        dragging = false
+    })
+}
+
+class Scene_gaming extends Scene {
+    // 构造函数不会在外面被直接调用
+    // 而是只会被 static new(game) 这个静态方法调用
     constructor(game) {
-        var self = this
+        super(game)
+        this.init()
+    }
 
-        self.game = game
-        self.paddle = Paddle(game.images)
-        self.ball = new Ball(game.images)
-        self.bricks = loadLevel(game.images, 1)
+    // 如果 this.instance 已经存在，就不会再执行 Scene 的构造函数，init() 就不会再被执行一次
+    static new(game) {
+        // 重新初始化这些全局变量
+        paddle = Paddle(game)
+        ball = Ball(game)
+        bricks = loadLevel(1, game)
+        score = 0
+        // super.new(game) 里面，把 this.instance 给定下来了，如果有，就取，没有，就创个新的
+        // 目的就是为了避免重复跑那些绑定事件的函数
+        // 其实也有点不好，因为我已经有点记不住父类的静态方法 new 的具体实现了
+        var i = super.new(game)
+        return i
+    }
 
-        self.fpsRange = document.getElementById("id-fps")
-        self.fpsRange.oninput = function() {
-            window.fps = Number(self.fpsRange.value)
-            self.fpsShow.innerHTML = "&nbsp&nbspfps: " + window.fps
+    init() {
+        // 让这个短点的变量名也能用，因为有太多其它的地方用到 g
+        var g = this.game
+
+        paddle = Paddle(g)
+
+        ball = Ball(g)
+
+        bricks = loadLevel(1, g)
+
+        // 注册按键对应的函数，好让有那个键按下的时候，运行一段代码，就是说，执行一个函数，棒。
+        g.registerAction('a', () => {
+            paddle.moveLeft()
+        })
+        g.registerAction('d', () => {
+            paddle.moveRight()
+        })
+        g.registerAction('w', () => {
+            paddle.moveUp()
+        })
+        g.registerAction('s', () => {
+            paddle.moveDown()
+        })
+
+        enableDebugMode(true, g)
+    }
+
+
+
+    update() {
+        ball.move()
+
+        if (ball.hit(paddle)) {
+            ball.bounceOff(paddle)
         }
 
-        self.fpsShow = document.getElementById('id-span')
-        self.fpsShow.innerHTML = "&nbsp&nbsp fps: " + window.fps
-
-        self.score = document.getElementById("id-score")
-        self.score.innerHTML = "分数: " + window.score
-
-        self.textarea = document.getElementById("id-textarea")
-
-        self.game.registerAction('a', function() {
-            self.paddle.moveLeft()
-        })
-
-        self.game.registerAction('d', function() {
-            self.paddle.moveRight()
-        })
-
-        // 暂时不需要上下移动的功能
-        // self.game.registerAction('w', function() {
-            // paddle.moveUp()
-        // })
-
-        // self.game.registerAction('s', function() {
-            // paddle.moveDown()
-        // })
-
-        // 如果这个时间触发，就动球，否则就不动球。
-        // 相当于用这个时间检测一个pause的功能
-        self.game.registerAction(' ', function() {
-            self.ball.move()
-        })
-
-        // 判断按下的是不是数字的一个巧招
-        window.addEventListener('keydown', function(event) {
-            if ('123456789'.includes(event.key)) {
-                self.bricks = loadLevel(self.game.images, Number(event.key))
-            }
-        })
-
-        // 三个函数联合起来，实现球的拖拽的功能
-        window.addEventListener('mousedown', function(event) {
-            // 在球的区域里面才能够拖这个球
-            if (event.offsetX >= self.ball.x && event.offsetX <= self.ball.x + self.ball.width) {
-                if (event.offsetY >= self.ball.y && event.offsetY <= self.ball.y + self.ball.height) {
-                    self.game.moving = true
-                    self.initialX = event.offsetX
-                    self.initialY = event.offsetY
-                }
-            }
-        })
-        // 在暂停的情况下才允许移动球，当然也可以可以随便改
-        window.addEventListener('mousemove', function(event) {
-            // 有空格事件的时候，是球能够动的状态
-            // 动的时候不能拖动球
-            if ((self.game.moving == true) && (self.game.keydowns[' '] != true)) {
-                self.currentX = event.offsetX
-                self.currentY = event.offsetY
-                self.ball.x += self.currentX - self.initialX
-                self.ball.y += self.currentY - self.initialY
-                // 注意，如果用笨办法，就是算位移，
-                // 移动一次球之后，要把原点重新定位到这个位置来，方便下一次移动计算位移
-                self.initialX = self.currentX
-                self.initialY = self.currentY
-            }
-        })
-        //鼠标不再点了，抬起来了，就不再移动球了
-        window.addEventListener('mouseup', function(event) {
-            self.game.moving = false
-        })
-        
-
-        self.collide = function() {
-            // 判断球和板子是不是相碰了
-            // 上下相碰，先不考虑左右两边,只改变球的Y方向的速度speedY
-            // 球严格在挡板两端的长度以内
-            // if ((self.ball.x + self.ball.width > self.paddle.x && self.ball.x < self.paddle.x + self.paddle.width)
-            //     && (self.ball.y + self.ball.height > self.paddle.y && self.ball.y < self.paddle.y + self.paddle.height)) {
-            //     self.ball.speedY *= -1
-            //     log('Current direction of ball: ' + (self.ball.speedX > 0 ? 'right' : 'left')  
-            //     + ' ' + (self.ball.speedY > 0 ? 'down' : 'up'))
-            // }
-
-            var rightMost = Math.max(self.paddle.x + self.paddle.width, self.ball.x + self.ball.width)
-            var leftMost = Math.min(self.paddle.x, self.ball.x)
-            var overlapX = self.paddle.width + self.ball.width - (rightMost - leftMost)
-
-            var upMost = Math.min(self.paddle.y, self.ball.y)
-            var downMost = Math.max(self.paddle.y + self.paddle.height, self.ball.y + self.ball.height)
-            var overlapY = self.paddle.height + self.ball.height - (downMost - upMost)
-
-            if (overlapX > 0 && overlapY > 0) {
-                // 撞到板子上下
-                if (overlapX > overlapY) {
-                    self.ball.speedY *= -1
-                }
-                // 撞到板子左右
-                else if (overlapY > overlapX) {
-                    self.ball.speedX *= -1
-                }
-                // 撞进对角线
-                else {
-                    self.ball.speedX *= -1
-                    self.ball.speedY *= -1
-                }
-                log('Current direction of ball: ' + (self.ball.speedX > 0 ? 'right' : 'left')  
-                + ' ' + (self.ball.speedY > 0 ? 'down' : 'up'))
-            }
-
-            // 球和砖块碰撞没有
-            for (let i = 0; i < self.bricks.length; i++) {
-                var b = self.bricks[i]
-                b.collide(self.ball)
+        for (let i = 0; i < bricks.length; i++) {
+            let brick = bricks[i];
+            if (brick.alive && ball.hit(brick)) {
+                brick.hit()
+                window.score += 100
+                ball.bounceOff(brick)
             }
         }
 
-        // 定义draw的含义，在setTimeout里面会不停地调用这个重新定义过的函数
-        self.draw = function() {
-            
-            if (game.keydowns[' '] == false) {
-                game.context.font = "50px Arial"
-                game.context.fillText("Paused",canvasWidth / 2, canvasHeight / 2)
-            }
-            
-            // 如果球的下端面碰到下面的屏幕，游戏就结束
-            if (self.ball.y + self.ball.height >= canvasHeight) {
-                // 存一个状态，说游戏结束了
-                window.gameover = true
-                var gameover = scene_gameover.new(self.game)
-                self.game.run_with_scene(gameover)
-            }
-            // 画挡板
-            game.drawImage(self.paddle)
+        // 这个地方就是游戏的死亡判断
+        if (ball.y + ball.h > this.game.canvas.height) {
+            var scene_game_over = Scene_game_over.new(this.game)
+            this.game.setScene(scene_game_over)
+        }
+    }
 
-            // 画球
-            game.drawImage(self.ball)
-        
-            // 画砖块
-            for (let i = 0; i < self.bricks.length; i++) {
-                var b = self.bricks[i]
-                // 如果砖块还活着，还有血，就画
-                if (b.alive) {
-                    game.drawImage(b)
-                }
-            }
+    draw() {
+        var game = this.game
+        game.showScore()
 
-            self.score.innerHTML = "分数: " + window.score
+        // 这个是总的画图函数，具体的画图函数，画什么，怎么画，怎么限制图像的位置，应该做成接口，然后在这里调用
+        // 比如，这里只把要画的对象，传给 game.drawImage 这个画一个东西的具体的实现
+        // 限制画出来的东西在画布的范围里面的函数 clamp，在 game.drawImage 里面调用了
+        game.drawImage(paddle)
+        game.drawImage(ball)
+        for (let i = 0; i < bricks.length; i++) {
+            let brick = bricks[i];
+            if (brick.alive) {
+                game.drawImage(brick)
+            }
         }
 
-        // 全部初始化清楚之后，输出一次球现在的运动方向
-        // 把现在的球的移动方向写在textarea里面
-        log('Current direction of ball: ' + (self.ball.speedX > 0 ? 'right' : 'left')  
-        + ' ' + (self.ball.speedY > 0 ? 'down' : 'up'))
+        // 放在这是为了让 Paused 这几个字母，挡住其他的东西，砖啊什么的
+        if (!ball.fired) {
+            game.context.fillText('Paused', 180, 140)
+        }
     }
 }
+
