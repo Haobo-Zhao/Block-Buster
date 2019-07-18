@@ -80,6 +80,12 @@
             g.context.drawImage(ele.image, ele.x, ele.y)
         }
 
+        g.drawElements = (eles) => {
+            for (const ele of eles) {
+                g.drawElement(ele)
+            }
+        }
+
         // 这两个逻辑会从外面注册进来，因为没有直接传进来要渲染的东西，所以还拿不到要画的东西
         g.update = () => { }
         g.draw = () => { }
@@ -138,7 +144,7 @@
     }
 
     const Ball = () => {
-        const o = createElement('./image/ball.png', 200, 150)
+        const o = createElement('./image/ball.png', 100, 220)
 
         o.speedX = 5
         o.speedY = 5
@@ -205,8 +211,8 @@
         return o
     }
 
-    const Brick = () => {
-        const o = createElement('./image/brick1.png', 0, 0)
+    const Brick = (x, y) => {
+        const o = createElement('./image/brick1.png', x, y)
 
         o.health = 1
 
@@ -225,7 +231,11 @@
         const game = Game()
         const paddle = Paddle()
         const ball = Ball()
-        const brick = Brick()
+        const bricks = []
+        for (let i = 0; i < 3; i++) {
+            const b = Brick(i * 100 + 70, 120)
+            bricks.push(b)
+        }
 
         // 把事件注册进 game 里面
         game.registerAction('a', () => {
@@ -245,9 +255,11 @@
             if (ball.isHitting(paddle)) {
                 ball.bounceOff(paddle)
             }
-            if (brick.alive() && ball.isHitting(brick)) {
-                ball.bounceOff(brick)
-                brick.break()
+            for (b of bricks) {
+                if (b.alive() && ball.isHitting(b)) {
+                    ball.bounceOff(b)
+                    b.break()
+                }
             }
             ball.move()
         }
@@ -255,8 +267,10 @@
         game.draw = () => {
             game.drawElement(paddle)
             game.drawElement(ball)
-            if (brick.alive()) {
-                game.drawElement(brick)
+            for (b of bricks) {
+                if (b.alive()) {
+                    game.drawElement(b)
+                }
             }
         }
     }
