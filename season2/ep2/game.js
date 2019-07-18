@@ -33,8 +33,7 @@ const Game = () => {
             const k = event.key
             if (k === 'Enter') {
                 g.paused = !g.paused
-            // Numer(' ') is 0, so get rid of it
-            } else if (k !== ' ' && !isNaN(Number(k))) {
+            } else if (k !== ' ' && !isNaN(Number(k))) { // Numer(' ') is 0, so get rid of it
                 let level = Number(k)
                 // default level to 1 if assigned an inappropriate number
                 if (level < 1 || level > window.levels.length) {
@@ -85,22 +84,25 @@ const Game = () => {
     g.draw = () => { }
 
     // 游戏的主要逻辑都在这里
-    window.setInterval(() => {
-        if (g.paused) {
-            return
+    g.runloop = () => {
+        if (!g.paused) {
+            // 触发当前被触发的交互事件，现在只有按下键的事件
+            g.events()
+
+            // 更新游戏的状态，比如让球动起来啊，之类的事情
+            g.update()
+
+            // 清空画布
+            g.context.clearRect(0, 0, g.canvas.width, g.canvas.height)
+
+            // 把要画的东西都画出来
+            g.draw()
         }
-        // 触发当前被触发的交互事件，现在只有按下键的事件
-        g.events()
 
-        // 更新游戏的状态，比如让球动起来啊，之类的事情
-        g.update()
-
-        // 清空画布
-        g.context.clearRect(0, 0, g.canvas.width, g.canvas.height)
-
-        // 把要画的东西都画出来
-        g.draw()
-    }, 1000 / 50)
+        window.setTimeout(() => {
+            g.runloop()
+        }, 1000 / window.fps)
+    }
 
     return g
 }

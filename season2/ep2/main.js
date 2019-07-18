@@ -2,6 +2,7 @@
 const __main = () => {
     const game = Game()
     game.enableDebugMode(true)
+    window.fps = 50
     window.bricks = game.loadLevel(1)
     const paddle = Paddle()
     const ball = Ball()
@@ -20,7 +21,7 @@ const __main = () => {
 
     // 在 game 外面，把 game 的更新和渲染逻辑加上来
     game.update = () => {
-        // check if ball is hitting other elements in current position, and change correspondingly
+        // check if ball is hitting other elements in current position, and change correspondingly when necessary
         if (ball.isHitting(paddle)) {
             ball.bounceOff(paddle)
         }
@@ -42,4 +43,7 @@ const __main = () => {
             }
         }
     }
+
+    // start the game
+    game.runloop()
 }
