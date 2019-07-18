@@ -41,6 +41,7 @@
         const g = {}
         g.canvas = canvas
         g.context = context
+        g.paused = false
         g.keydowns = {}
         g.actions = {}
 
@@ -62,9 +63,12 @@
 
         // 交互逻辑
         window.addEventListener('keydown', (event) => {
-            g.keydowns[event.key] = true
+            if (event.key === 'Enter') {
+                g.paused = !g.paused
+            } else {
+                g.keydowns[event.key] = true
+            }
         })
-
         window.addEventListener('keyup', (event) => {
             g.keydowns[event.key] = false
         })
@@ -92,6 +96,9 @@
 
         // 游戏的主要逻辑都在这里
         window.setInterval(() => {
+            if (g.paused) {
+                return
+            }
             // 触发当前被触发的交互事件，现在只有按下键的事件
             g.events()
 
