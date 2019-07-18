@@ -206,11 +206,17 @@
         return o
     }
 
+    const Brick = () => {
+        const o = createElement('./image/brick1.png', 0, 0)
+        return o
+    }
+
     // 入口函数，每一个程序都应该有且只有一个入口函数
     const __main = () => {
         const game = Game()
         const paddle = Paddle()
-        ball = Ball()
+        const ball = Ball()
+        const brick = Brick()
 
         // 把事件注册进 game 里面
         game.registerAction('a', () => {
@@ -236,6 +242,7 @@
         game.draw = () => {
             game.drawElement(paddle)
             game.drawElement(ball)
+            game.drawElement(brick)
         }
     }
 
