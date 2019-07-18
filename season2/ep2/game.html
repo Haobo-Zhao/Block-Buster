@@ -195,7 +195,6 @@
                 overlapY = Math.min(o.image.height, ele.image.height)
             }
 
-            log(overlapX, overlapY)
             if (overlapX >= overlapY) {
                 o.speedY *= -1
             } else {
@@ -208,6 +207,16 @@
 
     const Brick = () => {
         const o = createElement('./image/brick1.png', 0, 0)
+
+        o.health = 1
+
+        o.break = () => {
+            o.health = Math.min(o.health - 1, 0)
+        }
+        o.alive = () => {
+            return o.health >= 1
+        }
+
         return o
     }
 
@@ -232,17 +241,23 @@
 
         // 在 game 外面，把 game 的更新和渲染逻辑加上来
         game.update = () => {
-            ball.move()
-            // 判断球有没有撞到其他的 elements，如果撞到，让球吸附在这个被撞 elements 的表面，不让球进到里面去
+            // check if ball is hitting other elements in current position, and change correspondingly
             if (ball.isHitting(paddle)) {
                 ball.bounceOff(paddle)
             }
+            if (brick.alive() && ball.isHitting(brick)) {
+                ball.bounceOff(brick)
+                brick.break()
+            }
+            ball.move()
         }
 
         game.draw = () => {
             game.drawElement(paddle)
             game.drawElement(ball)
-            game.drawElement(brick)
+            if (brick.alive()) {
+                game.drawElement(brick)
+            }
         }
     }
 
