@@ -2,13 +2,9 @@
 const __main = () => {
     const game = Game()
     game.enableDebugMode(true)
+    window.bricks = game.loadLevel(1)
     const paddle = Paddle()
     const ball = Ball()
-    const bricks = []
-    for (let i = 0; i < 3; i++) {
-        const b = Brick(i * 100 + 70, 120)
-        bricks.push(b)
-    }
 
     // 把事件注册进 game 里面
     game.registerAction('a', () => {
@@ -28,7 +24,7 @@ const __main = () => {
         if (ball.isHitting(paddle)) {
             ball.bounceOff(paddle)
         }
-        for (b of bricks) {
+        for (b of window.bricks) {
             if (b.alive() && ball.isHitting(b)) {
                 ball.bounceOff(b)
                 b.break()
@@ -40,7 +36,7 @@ const __main = () => {
     game.draw = () => {
         game.drawElement(paddle)
         game.drawElement(ball)
-        for (b of bricks) {
+        for (b of window.bricks) {
             if (b.alive()) {
                 game.drawElement(b)
             }

@@ -30,11 +30,31 @@ const Game = () => {
             return
         }
         window.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
+            const k = event.key
+            if (k === 'Enter') {
                 g.paused = !g.paused
+            // Numer(' ') is 0, so get rid of it
+            } else if (k !== ' ' && !isNaN(Number(k))) {
+                let level = Number(k)
+                // default level to 1 if assigned an inappropriate number
+                if (level < 1 || level > window.levels.length) {
+                    level = 1
+                }
+                window.bricks = g.loadLevel(level)
             }
         })
     }
+
+    g.loadLevel = (level) => {
+        level -= 1
+        const bricks = []
+        for (const pos of window.levels[level]) {
+            const b = Brick(pos[0], pos[1])
+            bricks.push(b)
+        }
+        return bricks
+    }
+
     // 按键的交互逻辑
     window.addEventListener('keydown', (event) => {
         g.keydowns[event.key] = true
