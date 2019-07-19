@@ -15,7 +15,14 @@
 </head>
 
 <body>
-    <canvas id="id-canvas" width="400" height="300"></canvas>
+    <div>
+        <canvas id="id-canvas" width="400" height="300"></canvas>
+    </div>
+    <div>
+        <input id="id-input-fps" type="range" value="50" min="1" max="100" hidden>
+        <span>fps: </span>
+        <span id="id-text-fps">50</span>
+    </div>
 </body>
 
 <script src="./utils.js"></script>

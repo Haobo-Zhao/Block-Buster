@@ -29,6 +29,16 @@ const Game = () => {
         if (!isEnabled) {
             return
         }
+
+        const fpsInput = el('#id-input-fps')
+        const fpsText = el('#id-text-fps')
+        fpsInput.removeAttribute('hidden')
+        fpsInput.addEventListener('input', (event) => {
+            const fps = event.target.value
+            window.fps = fps
+            fpsText.innerText = fps
+        })
+
         window.addEventListener('keydown', (event) => {
             const k = event.key
             if (k === 'Enter') {
@@ -86,7 +96,7 @@ const Game = () => {
     // 游戏的主要逻辑都在这里
     g.runloop = () => {
         if (!g.paused) {
-            // 触发当前被触发的交互事件，现在只有按下键的事件
+            // 触发当前被触发的交互事件
             g.events()
 
             // 更新游戏的状态，比如让球动起来啊，之类的事情

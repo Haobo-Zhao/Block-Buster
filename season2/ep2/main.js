@@ -14,7 +14,6 @@ const __main = () => {
     game.registerAction('d', () => {
         paddle.moveRight()
     })
-
     game.registerAction(' ', () => {
         ball.fire()
     })
