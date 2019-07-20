@@ -1,12 +1,16 @@
-const Game = () => {
+const Game = (images) => {
     const canvas = el('#id-canvas')
     const context = canvas.getContext('2d')
 
     const g = {}
+
     g.canvas = canvas
     g.context = context
     g.paused = false
     g.score = 0
+    g.fps = 50
+
+    g.images = {}
     g.keydowns = {}
     g.actions = {}
 
@@ -36,7 +40,7 @@ const Game = () => {
         fpsInput.removeAttribute('hidden')
         fpsInput.addEventListener('input', (event) => {
             const fps = event.target.value
-            window.fps = fps
+            g.fps = Number(fps)
             fpsText.innerText = fps
         })
 
@@ -97,6 +101,19 @@ const Game = () => {
         g.score += addend
     }
 
+    g.loads = () => {
+        for (let name in images) {
+            const path = images[name]
+            const image = imageFromPath(path)
+            image.onload = () => {
+                g.images[name] = image
+                if (Object.keys(g.images).length === Object.keys(images).length) {
+                    g.run()
+                }
+            }
+        }
+    }
+
     // 这两个逻辑会从外面注册进来，因为没有直接传进来要渲染的东西，所以还拿不到要画的东西
     g.update = () => { }
     g.draw = () => { }
@@ -119,7 +136,11 @@ const Game = () => {
 
         window.setTimeout(() => {
             g.runloop()
-        }, 1000 / window.fps)
+        }, 1000 / g.fps)
+    }
+
+    g.run = () => {
+        g.runloop()
     }
 
     return g

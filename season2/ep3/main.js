@@ -1,8 +1,16 @@
 // 入口函数，每一个程序都应该有且只有一个入口函数
 const __main = () => {
-    const game = Game()
+    const images = {
+        paddle: './image/paddle.png',
+        ball: './image/ball.png',
+        brick: './image/brick1.png',
+    }
+    const game = Game(images, () => {
+
+    })
     game.enableDebugMode(true)
-    window.fps = 50
+    game.loads()
+
     window.bricks = game.loadLevel(1)
     const paddle = Paddle()
     const ball = Ball()
@@ -44,7 +52,4 @@ const __main = () => {
             }
         }
     }
-
-    // start the game
-    game.runloop()
 }

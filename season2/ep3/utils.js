@@ -14,7 +14,7 @@ const clamp = (val, min, max) => {
 }
 
 // 创造一张图片的功能包装成，或者叫抽象成，一个函数，这样就方便以后再用了，棒！
-const ImageFromPath = (path) => {
+const imageFromPath = (path) => {
     const i = new Image()
     i.src = path
     return i
@@ -23,7 +23,7 @@ const ImageFromPath = (path) => {
 const createElement = (pathOfImage, x, y) => {
     const ele = {}
 
-    ele.image = ImageFromPath(pathOfImage)
+    ele.image = imageFromPath(pathOfImage)
     ele.x = x
     ele.y = y
 
