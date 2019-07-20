@@ -25,6 +25,17 @@ const Ball = (game) => {
 
         o.x = clamp(o.x + o.speedX, 0, 400)
         o.y = clamp(o.y + o.speedY, 0, 300)
+
+        // if (game.debugMode) {
+        //     log(`ball position: (${o.x}, ${o.y})`)
+        //     log(`ball direction: ${o.y > 0 ? 'down' : 'up'}, ${o.speed > 0 ? 'right' : 'left'})`)
+        //     log(`--------------------`)
+        // }
+    }
+
+    o.moveBy = (dx, dy) => {
+        o.x += Number(dx)
+        o.y += Number(dy)
     }
 
     o.isHitting = (ele) => {
@@ -58,6 +69,10 @@ const Ball = (game) => {
         } else {
             o.speedX *= -1
         }
+    }
+
+    o.hasPoint = (x, y) => {
+        return (x >= o.x && x <= o.x + o.w) && (y >= o.y && y <= o.y + o.h)
     }
 
     return o

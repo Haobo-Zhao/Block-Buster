@@ -1,7 +1,7 @@
 const el = e => document.querySelector(e)
 
 // 调试的时候，可以直接暴露一个全局变量出来，然后 log 出来， 就可以了
-const log = console.log.bind(console)
+let log = console.log.bind(console)
 
 const clamp = (val, min, max) => {
     if (val < min) {

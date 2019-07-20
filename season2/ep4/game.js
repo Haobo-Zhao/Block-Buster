@@ -6,6 +6,8 @@ const Game = (images, initialize) => {
 
     g.canvas = canvas
     g.context = context
+
+    g.debugMode = false
     g.paused = false
     g.score = 0
     g.fps = 50
@@ -34,10 +36,23 @@ const Game = (images, initialize) => {
         if (!isEnabled) {
             return
         }
+        g.debugMode = true
 
         const fpsInput = el('#id-input-fps')
         const fpsText = el('#id-text-fps')
+        // const logText = el('#id-text-log')
+
+        // log = function() {
+        //     let line = ''
+        //     for (const arg of arguments) {
+        //         line += arg
+        //     }
+        //     logText.innerText = `${line}\n${logText.value}`
+        // }
+
         fpsInput.removeAttribute('hidden')
+        // logText.removeAttribute('hidden')
+
         fpsInput.addEventListener('input', (event) => {
             const fps = event.target.value
             g.fps = Number(fps)
@@ -138,13 +153,13 @@ const Game = (images, initialize) => {
 
             // 更新游戏的状态，比如让球动起来啊，之类的事情
             g.update()
-
-            // 清空画布
-            g.context.clearRect(0, 0, g.canvas.width, g.canvas.height)
-
-            // 把要画的东西都画出来
-            g.draw()
         }
+
+        // 清空画布
+        g.context.clearRect(0, 0, g.canvas.width, g.canvas.height)
+
+        // 把要画的东西都画出来
+        g.draw()
 
         window.setTimeout(() => {
             g.runloop()
