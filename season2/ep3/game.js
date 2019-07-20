@@ -1,4 +1,4 @@
-const Game = (images) => {
+const Game = (images, initialization) => {
     const canvas = el('#id-canvas')
     const context = canvas.getContext('2d')
 
@@ -26,8 +26,8 @@ const Game = (images) => {
     }
 
     // 注册事件机制的实现，给外面提供一个注册的接口
-    g.registerAction = (key, callback) => {
-        g.actions[key] = callback
+    g.registerAction = (key, action) => {
+        g.actions[key] = action
     }
 
     g.enableDebugMode = (isEnabled) => {
@@ -63,7 +63,7 @@ const Game = (images) => {
         level -= 1
         const bricks = []
         for (const pos of window.levels[level]) {
-            const b = Brick(pos[0], pos[1])
+            const b = Brick(g, pos[0], pos[1])
             bricks.push(b)
         }
         return bricks
@@ -76,6 +76,18 @@ const Game = (images) => {
     window.addEventListener('keyup', (event) => {
         g.keydowns[event.key] = false
     })
+
+    g.createElement = (nameOfImage, x, y) => {
+        const ele = {}
+
+        ele.image = g.images[nameOfImage]
+        ele.x = x
+        ele.y = y
+        ele.w = ele.image.width
+        ele.h = ele.image.height
+
+        return ele
+    }
 
     // 画一个游戏元素的时候
     // 参数的形状：
@@ -140,6 +152,8 @@ const Game = (images) => {
     }
 
     g.run = () => {
+        initialization()
+
         g.runloop()
     }
 

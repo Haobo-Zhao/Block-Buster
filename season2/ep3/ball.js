@@ -1,5 +1,5 @@
-const Ball = () => {
-    const o = createElement('./image/ball.png', 100, 220)
+const Ball = (game) => {
+    const o = game.createElement('ball', 100, 220)
 
     o.speedX = 5
     o.speedY = 5
@@ -28,11 +28,8 @@ const Ball = () => {
     }
 
     o.isHitting = (ele) => {
-        // 因为异步，还不能够在初始化的时候设置 o.width = o.image.width，可以的话，会更加方便
         // 角和边对上的时候，也算重叠
-        if (o.x + o.image.width >= ele.x && o.x <= ele.x + ele.image.width) {
-            return (o.y + o.image.height >= ele.y && o.y <= ele.y + ele.image.height)
-        }
+        return Math.max(o.x, ele.x) <= Math.min(o.x + o.w, ele.x + ele.w) && Math.max(o.y, ele.y) <= Math.min(o.y + o.h, ele.y + ele.h)
     }
 
     // 调用这个函数的前提就是，已经确认两个 elements 正在碰撞（矩形重叠）

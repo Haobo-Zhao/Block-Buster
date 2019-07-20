@@ -1,5 +1,5 @@
-const Brick = (x, y) => {
-    const o = createElement('./image/brick1.png', x, y)
+const Brick = (game, x, y) => {
+    const o = game.createElement('brick', x, y)
 
     o.health = 1
 
