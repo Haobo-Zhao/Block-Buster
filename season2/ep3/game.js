@@ -1,4 +1,4 @@
-const Game = (images, initialization) => {
+const Game = (images, initialize) => {
     const canvas = el('#id-canvas')
     const context = canvas.getContext('2d')
 
@@ -90,7 +90,7 @@ const Game = (images, initialization) => {
     }
 
     // 画一个游戏元素的时候
-    // 参数的形状：
+    // 参数 ele 的形状：
     // {
     //     image: 可以是一个 HTML <img> 元素,
     //     x: 100,
@@ -152,7 +152,7 @@ const Game = (images, initialization) => {
     }
 
     g.run = () => {
-        initialization()
+        initialize()
 
         g.runloop()
     }
