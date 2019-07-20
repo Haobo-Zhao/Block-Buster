@@ -28,12 +28,14 @@ const __main = () => {
             if (b.alive() && ball.isHitting(b)) {
                 ball.bounceOff(b)
                 b.break()
+                game.addScore(100)
             }
         }
         ball.move()
     }
 
     game.draw = () => {
+        game.drawScore()
         game.drawElement(paddle)
         game.drawElement(ball)
         for (b of window.bricks) {

@@ -6,6 +6,7 @@ const Game = () => {
     g.canvas = canvas
     g.context = context
     g.paused = false
+    g.score = 0
     g.keydowns = {}
     g.actions = {}
 
@@ -83,10 +84,17 @@ const Game = () => {
         g.context.drawImage(ele.image, ele.x, ele.y)
     }
 
-    g.drawElements = (eles) => {
-        for (const ele of eles) {
-            g.drawElement(ele)
-        }
+    g.drawText = (text, x, y) => {
+        g.context.fillText(text, x, y)
+    }
+
+    g.drawScore = () => {
+        g.context.font = '20px consolas'
+        g.drawText(`Score: ${g.score}`, 20, 290)
+    }
+
+    g.addScore = (addend) => {
+        g.score += addend
     }
 
     // 这两个逻辑会从外面注册进来，因为没有直接传进来要渲染的东西，所以还拿不到要画的东西
