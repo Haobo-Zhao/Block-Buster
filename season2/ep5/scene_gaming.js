@@ -45,6 +45,14 @@ const Scene_gaming = (game) => {
 
     // 传到 在初始化 game 完成之后，重新定义的 game.update() 里面去
     s.update = () => {
+        if (ball.y >= paddle.y + paddle.h) {
+            const scene_game_over = Scene_game_over(game)
+            game.setScene(scene_game_over)
+            // 不 return 其实也没有问题，
+            // 因为这个时候，game.update() 和 game.draw() 函数内调用 scene_game_over.update() 和 scene_game_over.draw()
+            return
+        }
+
         // check if ball is hitting other elements in current position, and change correspondingly when necessary
         if (ball.isHitting(paddle)) {
             ball.bounceOff(paddle)
