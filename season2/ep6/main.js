@@ -5,19 +5,9 @@ const __main = () => {
         ball: './image/ball.png',
         brick: './image/brick1.png',
     }
-    // const game = Game(images, (g) => {
-    //     const scene_gaming = Scene_gaming(g)
 
-    //     g.update = () => {
-    //         scene_gaming.update()
-    //     }
-
-    //     g.draw = () => {
-    //         scene_gaming.draw()
-    //     }
-    // })
     const game = Game(images, (g) => {
-        const scene_game = Scene_gaming(g)
+        const scene_game = new Scene_Gaming(g)
         g.setScene(scene_game)
     })
 

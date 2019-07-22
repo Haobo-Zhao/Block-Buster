@@ -1,15 +1,10 @@
-const Scene_game_over = (game) => {
-    const s = {
-        game
+
+class Scene_Game_Over extends Scene {
+    constructor(game) {
+        super(game)
     }
 
-    s.update = () => {
+    draw() {
 
     }
-
-    s.draw = () => {
-        game.drawText('Game Over', 140, 180)
-    }
-
-    return s
 }
