@@ -46,7 +46,7 @@ const __main = () => {
             ball.dragging = false
         })
 
-        // 在 game 外面，把 game 的更新和渲染逻辑加上来
+        // 在 Game 的定义外面，把更新和渲染逻辑加上来
         game.update = () => {
             // check if ball is hitting other elements in current position, and change correspondingly when necessary
             if (ball.isHitting(paddle)) {
