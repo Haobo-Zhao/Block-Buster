@@ -135,7 +135,7 @@ const Game = (images, initialize) => {
             image.onload = () => {
                 g.images[name] = image
                 if (Object.keys(g.images).length === Object.keys(images).length) {
-                    g.run()
+                    g.__start()
                 }
             }
         }
@@ -166,8 +166,8 @@ const Game = (images, initialize) => {
         }, 1000 / g.fps)
     }
 
-    g.run = () => {
-        initialize()
+    g.__start = () => {
+        initialize(g)
 
         g.runloop()
     }
