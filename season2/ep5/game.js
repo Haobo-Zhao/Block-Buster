@@ -11,6 +11,7 @@ const Game = (images, initialize) => {
     g.paused = false
     g.score = 0
     g.fps = 50
+    g.scene = null
 
     g.images = {}
     g.keydowns = {}
@@ -59,6 +60,7 @@ const Game = (images, initialize) => {
             fpsText.innerText = fps
         })
 
+        // 暂停 和 加载关卡 是按下就触发，不需要一直触发，所以不是用注册的办法注册进来，为了方便省事直接 hard code 在这
         window.addEventListener('keydown', (event) => {
             const k = event.key
             if (k === 'Enter') {
@@ -141,9 +143,17 @@ const Game = (images, initialize) => {
         }
     }
 
-    // 这两个逻辑会从外面注册进来，因为没有直接传进来要渲染的东西，所以还拿不到要画的东西
-    g.update = () => { }
-    g.draw = () => { }
+    // 用场景的 update 和 draw，加一层抽象增加灵活性
+    g.update = () => {
+        g.scene.update()
+     }
+    g.draw = () => {
+        g.scene.draw()
+    }
+
+    g.setScene = (scene) => {
+        g.scene = scene
+    }
 
     // 游戏的主要逻辑都在这里
     g.runloop = () => {
