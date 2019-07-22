@@ -1,4 +1,4 @@
-const Game = (images, initialize) => {
+const Game = (images, __init) => {
     const canvas = el('#id-canvas')
     const context = canvas.getContext('2d')
 
@@ -63,7 +63,7 @@ const Game = (images, initialize) => {
         // 暂停 和 加载关卡 是按下就触发，不需要一直触发，所以不是用注册的办法注册进来，为了方便省事直接 hard code 在这
         window.addEventListener('keydown', (event) => {
             const k = event.key
-            if (k === 'Enter') {
+            if (k === 'p') {
                 g.paused = !g.paused
             } else if (k !== ' ' && !isNaN(Number(k))) { // Numer(' ') is 0, so get rid of it
                 let level = Number(k)
@@ -122,7 +122,6 @@ const Game = (images, initialize) => {
     }
 
     g.drawScore = () => {
-        g.context.font = '20px consolas'
         g.drawText(`Score: ${g.score}`, 20, 290)
     }
 
@@ -141,6 +140,10 @@ const Game = (images, initialize) => {
                 }
             }
         }
+    }
+
+    g.setFont = (style) => {
+        g.context.font = style
     }
 
     // 用场景的 update 和 draw，加一层抽象增加灵活性
@@ -177,7 +180,7 @@ const Game = (images, initialize) => {
     }
 
     g.__start = () => {
-        initialize(g)
+        __init(g)
 
         g.runloop()
     }

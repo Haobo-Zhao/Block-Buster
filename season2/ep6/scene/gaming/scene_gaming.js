@@ -1,36 +1,36 @@
-class Scene_Gaming {
+class SceneGaming extends Scene {
     constructor(game) {
-        this.game = game
-
-        this.initialize()
+        super(game)
+        this.__init()
     }
 
-    initialize() {
-        window.bricks = game.loadLevel(1)
-        const paddle = Paddle(game)
-        const ball = Ball(game)
+    __init() {
+        this.setElements()
+        this.__bindEvents()
+    }
 
+    __bindEvents() {
         // 把事件注册进 game 里面
-        game.registerAction('a', () => {
-            paddle.moveLeft()
+        this.game.registerAction('a', () => {
+            this.paddle.moveLeft()
         })
-        game.registerAction('d', () => {
-            paddle.moveRight()
+        this.game.registerAction('d', () => {
+            this.paddle.moveRight()
         })
-        game.registerAction(' ', () => {
-            ball.fire()
+        this.game.registerAction(' ', () => {
+            this.ball.fire()
         })
 
         // mechanism of dragging ball
-        game.canvas.addEventListener('mousedown', (event) => {
+        this.game.canvas.addEventListener('mousedown', (event) => {
             const x = event.offsetX
             const y = event.offsetY
-            if (ball.hasPoint(x, y)) {
-                ball.dragging = true
+            if (this.ball.hasPoint(x, y)) {
+                this.ball.dragging = true
             }
         })
-        game.canvas.addEventListener('mousemove', (event) => {
-            if (ball.dragging) {
+        this.game.canvas.addEventListener('mousemove', (event) => {
+            if (this.ball.dragging) {
                 // mousemove 的单位是 physical pixel
                 // 在 canvas 里面移动 ball 的时候，单位是 CSS pixel
                 // 在浏览器放大比例不是 1 的时候，会有一个差别，所以需要做一个转换
@@ -39,46 +39,53 @@ class Scene_Gaming {
                 const zoomLevel = window.devicePixelRatio
                 const dxCSS = dxPhysical / zoomLevel
                 const dyCSS = dyPhysical / zoomLevel
-                ball.moveBy(dxCSS, dyCSS)
+                this.ball.moveBy(dxCSS, dyCSS)
             }
         })
-        game.canvas.addEventListener('mouseup', (event) => {
-            ball.dragging = false
+        this.game.canvas.addEventListener('mouseup', (event) => {
+            this.ball.dragging = false
         })
     }
 
-    // 会覆盖 完成初始化的 game 的 game.update()
+    // 设置这个场景里面的游戏元素，挡板啊，砖块啊，之类的
+    setElements() {
+        window.bricks = this.game.loadLevel(1)
+        this.paddle = Paddle(this.game)
+        this.ball = Ball(this.game)
+    }
+
+    // 会覆盖 完成初始化的 game 的 this.game.update()
     update() {
-        if (ball.y >= paddle.y + paddle.h) {
-            const scene_game_over = Scene_Game_Over(game)
-            game.setScene(scene_game_over)
+        if (this.ball.y >= this.paddle.y + this.paddle.h) {
+            const scene_game_over = SceneGameover.instance(this.game)
+            this.game.setScene(scene_game_over)
             // 不 return 其实也没有问题，
-            // 因为这个时候，game.update() 和 game.draw() 函数内调用 scene_game_over.update() 和 scene_game_over.draw()
+            // 因为这个时候，this.game.update() 和 this.game.draw() 函数内调用 scene_game_over.update() 和 scene_game_over.draw()
             return
         }
 
         // check if ball is hitting other elements in current position, and change correspondingly when necessary
-        if (ball.isHitting(paddle)) {
-            ball.bounceOff(paddle)
+        if (this.ball.isHitting(this.paddle)) {
+            this.ball.bounceOff(this.paddle)
         }
-        for (b of window.bricks) {
-            if (b.alive() && ball.isHitting(b)) {
-                ball.bounceOff(b)
+        for (const b of window.bricks) {
+            if (b.alive() && this.ball.isHitting(b)) {
+                this.ball.bounceOff(b)
                 b.break()
-                game.addScore(100)
+                this.game.addScore(100)
             }
         }
-        ball.move()
+        this.ball.move()
     }
 
     // 同 s.update()
     draw() {
-        game.drawScore()
-        game.drawElement(paddle)
-        game.drawElement(ball)
-        for (b of window.bricks) {
+        this.game.drawScore()
+        this.game.drawElement(this.paddle)
+        this.game.drawElement(this.ball)
+        for (const b of window.bricks) {
             if (b.alive()) {
-                game.drawElement(b)
+                this.game.drawElement(b)
             }
         }
     }

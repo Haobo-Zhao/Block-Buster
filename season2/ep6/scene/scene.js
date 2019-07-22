@@ -3,6 +3,15 @@ class Scene {
         this.game = game
     }
 
+    static new(game) {
+        return new this(game)
+    }
+
+    static instance(game) {
+        this.i = this.i || new this(game)
+        return this.i
+    }
+
     // purposefully default update method to be empty
     update() {
 

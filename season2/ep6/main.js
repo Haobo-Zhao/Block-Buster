@@ -7,8 +7,9 @@ const __main = () => {
     }
 
     const game = Game(images, (g) => {
-        const scene_game = new Scene_Gaming(g)
-        g.setScene(scene_game)
+        const s = SceneTitle.instance(g)
+        g.setScene(s)
+        g.setFont('20px consolas')
     })
 
     game.enableDebugMode(true)
