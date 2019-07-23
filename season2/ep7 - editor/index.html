@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        #id-canvas {
+            border: 2px rgb(0, 153, 255) solid;
+        }
+
+        textarea {
+            resize: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <canvas id="id-canvas" width="400" height="300"></canvas>
+    </div>
+    <div>
+        <input id="id-input-fps" type="range" value="50" min="1" max="100" hidden>
+        <span>fps: </span>
+        <span id="id-text-fps">50</span>
+    </div>
+    <!-- <div>
+        <textarea id="id-text-log" cols="40" rows="20" hidden></textarea>
+    </div> -->
+</body>
+<!-- game related files -->
+<script src="./game/utils.js"></script>
+<script src="./game/levels.js"></script>
+<script src="./game/game.js"></script>
+
+<!-- scene related files -->
+<script src="./scene/scene.js"></script>
+
+<script src="./scene/title/scene_title.js"></script>
+
+<script src="./scene/editor/scene_editor.js"></script>
+
+<script src="./scene/gaming/paddle.js"></script>
+<script src="./scene/gaming/ball.js"></script>
+<script src="./scene/gaming/brick.js"></script>
+<script src="./scene/gaming/scene_gaming.js"></script>
+
+<script src="./scene/game_over/scene_game_over.js"></script>
+
+<!-- entry point of the game -->
+<script src="./main.js"></script>
+<script>
+    __main()
+</script>
+
+</html>
