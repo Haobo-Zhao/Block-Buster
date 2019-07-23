@@ -24,7 +24,7 @@ class SceneEditor extends Scene {
             const newX = (mouseX - this.b.w / 2) - (mouseX - this.b.w / 2) % 25
             const newY = (mouseY - this.b.h / 2) - (mouseY - this.b.h / 2) % 10
             const limitX = this.game.canvas.width - this.b.w
-            const limitY = 220 - this.b.w
+            const limitY = 220 - this.b.h
             const newPos = {
                 x: clamp(newX, 0, limitX),
                 y: clamp(newY, 0, limitY),
@@ -48,8 +48,8 @@ class SceneEditor extends Scene {
 
         const c = this.game.context
         c.beginPath();
-        c.moveTo(0, 200);
-        c.lineTo(400, 200);
+        c.moveTo(0, 220);
+        c.lineTo(400, 220);
         c.stroke();
     }
 
@@ -69,10 +69,8 @@ class SceneEditor extends Scene {
 
     draw() {
         this.drawInfo()
-
-        this.drawShadowBrick()
-
         this.drawSavedBricks()
+        this.drawShadowBrick()
     }
 
     saveLevel() {
