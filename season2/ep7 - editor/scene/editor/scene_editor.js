@@ -36,6 +36,7 @@ class SceneEditor extends Scene {
             if (!this.b) {
                 return
             }
+
             const mouseX = event.offsetX
             const mouseY = event.offsetY
             // 一格一格的排列效果
@@ -58,6 +59,7 @@ class SceneEditor extends Scene {
             this.level.push(pos)
         })
 
+        // 切换到 title 场景
         window.addEventListener('keydown', (event) => {
             if (!this.game.editing) {
                 return
@@ -112,5 +114,8 @@ class SceneEditor extends Scene {
             return
         }
         window.levels.push(this.level)
+        // use window.localStorage for local persistency
+        const data = JSON.stringify(window.levels)
+        window.localStorage.setItem('levels', data)
     }
 }
