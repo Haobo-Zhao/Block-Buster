@@ -7,7 +7,7 @@ const __main = () => {
     }
 
     const game = Game(images, (g) => {
-        const s = SceneEditor.instance(g)
+        const s = SceneTitle.instance(g)
         g.setScene(s)
         g.setFont('20px consolas')
     })
