@@ -29,6 +29,7 @@ class SceneEditor extends Scene {
             this.b = Brick(this.game)
         })
 
+        // shadow brick 跟随鼠标，而且是一格一格的效果
         this.game.canvas.addEventListener('mousemove', (event) => {
             if (!this.game.editing) {
                 return

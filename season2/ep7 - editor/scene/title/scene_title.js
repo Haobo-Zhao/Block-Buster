@@ -10,6 +10,8 @@ class SceneTitle extends Scene {
 
     __bindEvents() {
         window.addEventListener('keydown', (event) => {
+            // 可以判断 game.scene.name 或者类似的，能够知道正在跑的是哪个 scene 的办法
+            // 来决定允不允许触发这些事件
             const k = event.key
             let s = null
             // bail early
