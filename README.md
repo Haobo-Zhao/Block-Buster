@@ -28,3 +28,6 @@ Enjoy!
 
 **When editing**
 ![click in the available area to add bricks](/screenshot_4.png)
+
+**Gmaing in the customized level**
+![this is the rewarding moment of being creative my friends!](/screenshot_5.png)

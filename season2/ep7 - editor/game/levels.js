@@ -1,4 +1,5 @@
-window.levels = [
+// setting global levels
+const defaultLevels = [
     [
         [0, 0,],
     ],
@@ -13,3 +14,10 @@ window.levels = [
         [200, 150,],
     ],
 ]
+
+const localLevels = JSON.parse(window.localStorage.getItem('levels'))
+if (!localLevels) {
+    window.localStorage.setItem('levels', JSON.stringify(defaultLevels))
+}
+
+window.levels = localLevels || defaultLevels

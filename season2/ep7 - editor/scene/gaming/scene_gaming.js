@@ -1,11 +1,7 @@
 class SceneGaming extends Scene {
     constructor(game) {
         super(game)
-        this.__init()
-    }
-
-    __init() {
-        this.setElements()
+        this.init()
         this.__bindEvents()
     }
 
@@ -48,7 +44,7 @@ class SceneGaming extends Scene {
     }
 
     // 设置这个场景里面的游戏元素，挡板啊，砖块啊，之类的
-    setElements() {
+    init() {
         window.bricks = this.game.loadLevel(1)
         this.paddle = Paddle(this.game)
         this.ball = Ball(this.game)
