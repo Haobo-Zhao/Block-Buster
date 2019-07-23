@@ -11,13 +11,13 @@ Enjoy!
 
 2) press a or d to move the paddle left or right
 
-3) press w or s to move the paddle up or down
+3) ~press w or s to move the paddle up or down~
 
-4) press p to pause the game when game over
+4) press p to pause the game
 
 5) drag the ball around to place the ball wherever you want
 
-6) press number 1, 2, or 3 to select levels, default to level 1
+6) press number (keys 1, 2, etc above key row QWERT) to select levels, default to level 1
 
 7) press e in the title scene to create levels (being creative is truly rewarding!)
 
