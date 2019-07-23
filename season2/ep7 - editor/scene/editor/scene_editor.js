@@ -11,12 +11,16 @@ class SceneEditor extends Scene {
         return this.i
     }
 
+    // 提供这个接口，好给每一次切换到 editor 的时候，初始化场景里面的东西的状态
     init() {
         this.game.editing = true
         this.level = []
         this.b = null
     }
 
+    // editor 里面的事件，只有在 editor 这个场景里面才触发
+    // 通过 game.editing 来判断是不是在 editor 这个场景里面
+    // 当然也可以直接用场景的名字来判断，这样对每个场景的触发事件判断的时候，都能够通用
     __bindingEvents() {
         this.game.canvas.addEventListener('mouseenter', (event) => {
             if (!this.game.editing) {
@@ -102,6 +106,7 @@ class SceneEditor extends Scene {
         this.drawShadowBrick()
     }
 
+    // 保存到全局变量 levels，也可以 JSON.stringify() 之后，存到localStorage，就可以持久化了
     save() {
         if (this.level.length == 0) {
             return
