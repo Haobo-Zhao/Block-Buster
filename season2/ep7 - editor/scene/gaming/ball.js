@@ -1,5 +1,5 @@
 const Ball = (game) => {
-    const o = game.createElement('ball', 100, 220)
+    const o = game.createElement('ball', 100, 240)
 
     o.speedX = 5
     o.speedY = 5
