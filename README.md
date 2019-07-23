@@ -4,11 +4,8 @@ Old-fashioned bricks-breaker, using html, css and vanilla javascript
 Enjoy!
 
 # Instructions
-**Download the whole project, open the game.html file in a browser(Chrome and Firefox preferred)**
-**After fully loaded,**
 
 0) open `index.html` in your browser
-
 1) press space to continue or stop (pause the game) moving the ball
 2) press a or d to move the paddle left or right
 3) press w or s to move the paddle up or down
