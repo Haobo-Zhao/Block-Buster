@@ -5,16 +5,30 @@ class SceneEditor extends Scene {
         this.__bindingEvents()
     }
 
+    static instance(game) {
+        this.i = this.i || new this(game)
+        this.i.init()
+        return this.i
+    }
+
     init() {
+        this.game.editing = true
         this.level = []
+        this.b = null
     }
 
     __bindingEvents() {
         this.game.canvas.addEventListener('mouseenter', (event) => {
+            if (!this.game.editing) {
+                return
+            }
             this.b = Brick(this.game)
         })
 
         this.game.canvas.addEventListener('mousemove', (event) => {
+            if (!this.game.editing) {
+                return
+            }
             if (!this.b) {
                 return
             }
@@ -33,18 +47,30 @@ class SceneEditor extends Scene {
         })
 
         this.game.canvas.addEventListener('mousedown', (event) => {
-            const newB = Brick(this.game, this.b.x, this.b.y)
-            this.level.push(newB)
-            log(this.level)
+            if (!this.game.editing) {
+                return
+            }
+            const pos = [this.b.x, this.b.y]
+            this.level.push(pos)
+        })
+
+        window.addEventListener('keydown', (event) => {
+            if (!this.game.editing) {
+                return
+            }
+            const k = event.key
+            if (k === 'f') {
+                this.save()
+                const s = SceneTitle.instance(this.game)
+                this.game.setScene(s)
+                this.game.editing = false
+            }
         })
     }
 
-    update() {
-
-    }
-
     drawInfo() {
-        this.game.drawText('editor', 20, 290)
+        this.game.drawText('editor', 20, 250)
+        this.game.drawText('press f to save and finish editing', 20, 290)
 
         const c = this.game.context
         c.beginPath();
@@ -62,7 +88,10 @@ class SceneEditor extends Scene {
     }
 
     drawSavedBricks() {
-        for (const b of this.level) {
+        for (const pos of this.level) {
+            const x = pos[0]
+            const y = pos[1]
+            const b = Brick(this.game, x, y)
             this.game.drawElement(b)
         }
     }
@@ -73,7 +102,10 @@ class SceneEditor extends Scene {
         this.drawShadowBrick()
     }
 
-    saveLevel() {
-
+    save() {
+        if (this.level.length == 0) {
+            return
+        }
+        window.levels.push(this.level)
     }
 }
