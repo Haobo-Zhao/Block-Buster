@@ -22,6 +22,7 @@ class SceneEditor extends Scene {
     // 通过 game.editing 来判断是不是在 editor 这个场景里面
     // 当然也可以直接用场景的名字来判断，这样对每个场景的触发事件判断的时候，都能够通用
     __bindingEvents() {
+        // 鼠标放进来的时候，再去创建这块 shadow brick
         this.game.canvas.addEventListener('mouseenter', (event) => {
             if (!this.game.editing) {
                 return

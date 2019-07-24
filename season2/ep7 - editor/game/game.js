@@ -11,7 +11,7 @@ const Game = (images, __init) => {
     g.paused = false
     g.score = 0
     g.fps = 50
-    g.scene = null
+    g.scene = {}
 
     g.images = {}
     g.keydowns = {}
