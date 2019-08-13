@@ -1,4 +1,4 @@
-# Games-Bricks-Breaker
+# Block Buster
 Old-fashioned bricks-breaker, using html, css and vanilla javascript
 
 Enjoy!
