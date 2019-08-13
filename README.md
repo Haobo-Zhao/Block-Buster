@@ -1,5 +1,5 @@
 # Block Buster
-Old-fashioned bricks-breaker, using html, css and vanilla javascript
+Old fashioned game bricks breaker, using HTML (canvas), CSS and vanilla JavaScript, and allow for persistence when creating customized levels.
 
 Enjoy!
 
